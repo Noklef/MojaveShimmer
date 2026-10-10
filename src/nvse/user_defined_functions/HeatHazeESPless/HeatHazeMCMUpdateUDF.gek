@@ -1,10 +1,10 @@
 array_var aUpdatedMods
 begin function {aUpdatedMods}
+    ; DEV NOTE: apparently MCM Extender fires this from OnPauseMenuClose, after SaveCachedIni has written the .ini to disk
+
     ; MCM Extender passes through all the updated mods, so we need to check for 'HeatHazeESPless' in the list
     if eval (Ar_Find "HeatHazeESPless" aUpdatedMods) != Ar_BadNumericIndex
-        ; Issues with using MCM to update the settings, os we need to clean up the old and re-apply the new
-        call (CompileScript "HeatHazeESPless/HeatHazeCleanupUDF.gek") ""
-        ; Just reload the script, the .ini is saved at this point
+        ; Just reload the script, the .ini should be saved at this point.
         call (CompileScript "HeatHazeESPless/HeatHazeScript.gek")
     endif
 

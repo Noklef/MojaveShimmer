@@ -45,6 +45,13 @@ begin function {}
             if rHaze.GetDisabled
                 rHaze.Enable
             endif
+
+            ; Hacky fix, re-apply the spread shale if it hasn't stuck (only call `setScale` when it's different)
+            float fScale = rHaze.AuxVarGetFlt "*_HeatHazeESPless.Scale"
+            if eval fScale > 0 && (rHaze.GetScale) != fScale
+                rHaze.SetScale fScale
+            endif
+
             ; Setting up the hidden helper's texture controller to control refraction strength
             ; This is a bit of a hack tbh
             float fRefractionStrength = rHaze.AuxVarGetFlt "*_HeatHazeESPless.Strength"

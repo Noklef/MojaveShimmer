@@ -18,9 +18,10 @@ begin function {}
     ref rHazeBase ; Our custom activator we clone with the heat mesh assigned to it
     ref rHaze ; The actual haze object
     ref rWeathers ; List of weathers that the haze effect is enabled for
+    float fRefractionStrength ; Refraction strength supplied to the NIF controller
+    float fScale ; Scale that's calculated from the haze spread
     float fHazeSpread ; INI setting to use for scaling
     float fHazeIntensityMultiplier ; INI setting to adjust haze strength
-    float fRefractionStrength ; Final strength supplied to the NIF controller
 
     ; 14 is the player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
@@ -140,9 +141,11 @@ begin function {}
     ; Hide during setup; bEnabled=0 must also hide a reused object.
     rHaze.Disable
 
-    ; Fixed size: Haze Spread 1 uses twice the cylinder's native size.
-    ; Apply on setup/MCM reload to both new and reused objects.
-    rHaze.SetScale (fHazeSpread * 2)
+    ; Setting the scale to 2x the haze spread value 
+    let fScale := fHazeSpread * 2
+    ; Store it so the update function can re-apply it if it doesn't stick while disabled / in menus
+    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Scale" fScale
+    rHaze.SetScale fScale
 
     ; Calculating the refreraction strength, since it goes from 0 -> 1 in the .nif
     let fRefractionStrength := fHazeSpread * 0.1 * fHazeIntensityMultiplier

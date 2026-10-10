@@ -36,4 +36,4 @@ Ai was used in the following ways:
 - Helping me update / modify the [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to work with recent versions of blender.
 - Generating the GitHub release scripts / `heat_hase_variance_generation.py`
 
-Model used: `GPT-6.1 Sol`
+Model used: `Claude Opus 5.5` (Formerly `GPT-6.1 Sol`)
