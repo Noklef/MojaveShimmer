@@ -53,7 +53,7 @@ begin function {}
     SetEventHandler "MCMExtUpdate" (CompileScript "HeatHazeESPless/HeatHazeMCMUpdateUDF.gek")
 
     ; Read & work with the [Settings] HazeSpread value from the ini file
-    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze.ini"
+    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze-ESPless.ini"
 
     ; Do some checks to clamp down the haze spread if it's too wild
     if eval fHazeSpread <= 0.5
@@ -64,8 +64,8 @@ begin function {}
     endif
 
     ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
-    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "HeatHaze.ini"
-    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "HeatHaze.ini") == ""
+    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini"
+    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini") == ""
         let fHazeIntensityMultiplier := 1.00
     endif
 
@@ -168,7 +168,7 @@ begin function {}
     let bEnabled := (GetINIString "General:bEnabled" "HeatHaze.ini") != "0"
 
     ; Cache the MCM/INI choice; the update function shows the outline once 3D is loaded.
-    let bDebug := (GetINIString "Debug:bDebug" "HeatHaze.ini") == "1"
+    let bDebug := (GetINIString "Debug:bDebug" "HeatHaze-ESPless.ini") == "1"
     rHaze.AuxVarSetFlt "*_HeatHazeESPless.Debug" bDebug
 
     ; Hide it here so the debug off via MCM doesn't leave it showing

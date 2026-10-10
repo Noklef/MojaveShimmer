@@ -1,7 +1,7 @@
 {
     "modName": "HeatHazeESPless",
     "displayName": "Heat Haze - ESPless",
-    "saveFile": "HeatHaze.ini",
+    "saveFile": "HeatHaze-ESPless.ini",
     "minMCMVersion": 1.0,
     "requirements": [
         { "type": "file", "file": "nvse/plugins/scripts/ln_HeatHazeESPless.txt" }
@@ -35,7 +35,7 @@
                         "valueDecimal": 2,
                         "valueIncrement": 0.5,
                         "valueMin": 0.5,
-                        "valueMax": 5
+                        "valueMax": 2.5
                     }
                 },
                 "3": {
