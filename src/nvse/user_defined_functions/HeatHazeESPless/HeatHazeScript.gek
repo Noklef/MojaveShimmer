@@ -43,6 +43,9 @@ begin function {}
     ; Register the cleanup script to run before loading a save
     SetEventHandler "PreLoadGame" rCleanup
 
+    ; Hook the MCMExtUpdate event, which re-applies the settings
+    SetEventHandler "MCMExtUpdate" (CompileScript "HeatHazeESPless/HeatHazeMCMUpdateUDF.gek")
+
     ; Read & work with the [Settings] NoonScale value from the ini file
     let fNoonScale := GetINIFloat "Settings:NoonScale" "HeatHaze.ini"
     if eval !fNoonScale
