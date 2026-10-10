@@ -4,7 +4,6 @@ begin function {aUpdatedMods}
 
     ; MCM Extender passes through all the updated mods, so we need to check for 'HeatHazeESPless' in the list
     if eval (Ar_Find "HeatHazeESPless" aUpdatedMods) != Ar_BadNumericIndex
-        ; Just reload the script, the .ini should be saved at this point.
         call (CompileScript "HeatHazeESPless/HeatHazeScript.gek")
     endif
 

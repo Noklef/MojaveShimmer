@@ -62,8 +62,7 @@ begin function {}
             rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 0 fRefractionStrength
             rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 1 fRefractionStrength
 
-            ; Debug: show the wireframe outline (flag 0 is Hidden). The .nif stores it hidden and 3D reloads
-            ; restore that, so this only needs calling while debug is on; setup hides it when switched off.
+            ; IF we're debugging, show the wireframe outline
             if eval bDebug
                 rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 0
             endif
