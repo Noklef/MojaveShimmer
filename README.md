@@ -1,4 +1,4 @@
-# Heat Haze - ESPless version
+# Mojave Shimmer
 
 This is a conversion of doodlum's [Heat Haze](https://www.nexusmods.com/newvegas/mods/76286) mod into an ESP-less version. Originally i was going to be extending upon it; however i felt that the haze effect that had been created didn't feel... right. 
 
@@ -14,7 +14,7 @@ The main goal of this was following the `ESP-less` trend of this mod; since I'm 
 - Updated mesh to be a bit simpler for what a haze effect essentially is (instead of the spheres)
 - Updated to allow for editing the configuration through MCM (optional, but restricts the config values properly)
 - Haze intendity modifier / distance setting
-- Updated to include FO3 + DLC / FNV DLC weathers that can enable this
+- Updated to include (some) FO3 + DLC / (some) FNV DLC weathers that can enable this, where it makes sense to.
 - Added a debug wireframe option to show where the effect is in the world
 
 ## Installation
@@ -22,7 +22,7 @@ The main goal of this was following the `ESP-less` trend of this mod; since I'm 
 
 ## Game Plan
 1. ~~Convert it to ESP-less version~~ ***Done***
-2. ~~Set-up scripts to add variance to the `.nif`~~ ***Done***
+2. ~~Set-up scripts to add variance to the `.nif`~~ ***No need anymore***
 3. Optimize the code a little bit
 4. ~~Make it a bit more configurable~~ ***Done***
 5. ~~Allow it to be controllable / togglable through MCM~~ ***Done***

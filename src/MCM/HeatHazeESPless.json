@@ -33,8 +33,8 @@
                     ],
                     "scale": {
                         "valueDecimal": 2,
-                        "valueIncrement": 0.5,
-                        "valueMin": 0.25,
+                        "valueIncrement": 0.25,
+                        "valueMin": 0.5,
                         "valueMax": 2.5
                     }
                 },
@@ -49,7 +49,7 @@
                     "scale": {
                         "valueDecimal": 2,
                         "valueIncrement": 0.1,
-                        "valueMin": 0.25,
+                        "valueMin": 0.5,
                         "valueMax": 2.5
                     }
                 },
