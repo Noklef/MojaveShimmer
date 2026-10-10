@@ -24,25 +24,25 @@
                     ]
                 },
                 "2": {
-                    "title": "Haze Spread",
+                    "title": "Haze Spread Distance",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Set the distance that the heat haze effect starts at.",
+                    "mouse": "Set the distance that the heat haze effect starts at. At further distances, increase the Intensity Multiplier",
                     "vars": [
                         { "configINI": "Settings:HazeSpread", "default": 1.0 }
                     ],
                     "scale": {
                         "valueDecimal": 2,
-                        "valueIncrement": 0.1,
+                        "valueIncrement": 0.5,
                         "valueMin": 0.5,
-                        "valueMax": 2.5
+                        "valueMax": 5
                     }
                 },
                 "3": {
                     "title": "Haze Intensity Multiplier",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Adjust distortion strength",
+                    "mouse": "Adjusts the strength of the distortion effect.",
                     "vars": [
                         { "configINI": "Settings:HazeIntensityMultiplier", "default": 1.0 }
                     ],
@@ -57,7 +57,7 @@
                     "title": "Debug Mode",
                     "enable": 1,
                     "type": 5,
-                    "mouse": "Shows a green outline for the haze effect (to see where it starts).",
+                    "mouse": "Shows a green outline for the haze effect, to see the distance it appears at + the strength of it.",
                     "vars": [
                         { "configINI": "Debug:bDebug", "default": 0 }
                     ]

@@ -54,8 +54,13 @@ begin function {}
 
     ; Read & work with the [Settings] HazeSpread value from the ini file
     let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze.ini"
-    if eval fHazeSpread <= 0
+
+    ; Do some checks to clamp down the haze spread if it's too wild
+    if eval fHazeSpread <= 0.5
         let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
+    elseif eval fHazeSpread > 2.5
+        ; 2.5 * 4 (the amount we default scale the effect to) scales to 10, any more than that doesn't render it properly
+        let fHazeSpread := 2.5
     endif
 
     ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
@@ -144,16 +149,16 @@ begin function {}
     ; Hide during setup; bEnabled=0 must also hide a reused object.
     rHaze.Disable
 
-    ; Setting the scale to 2x the haze spread value 
-    let fScale := fHazeSpread * 2
+    ; Setting the scale to 4x the haze spread value (which is 4x the mesh's size)
+    let fScale := fHazeSpread * 4
     ; Store it so the update function can re-apply it if it doesn't stick while disabled / in menus
     rHaze.AuxVarSetFlt "*_HeatHazeESPless.Scale" fScale
     rHaze.SetScale fScale
 
-    ; Calculating the refreraction strength, since it goes from 0 -> 1 in the .nif
-    let fRefractionStrength := fHazeSpread * 0.1 * fHazeIntensityMultiplier
+    ; Calculating the refreraction strength
+    let fRefractionStrength := 0.4 * fHazeIntensityMultiplier
     
-    ; Set the strength to 1 if it's greater, since the nif can't have a higher than 1 refraction
+    ; Set the strength to 1 if it's greater, since the nif can't have a higher than a value of 1 for the refraction
     if eval fRefractionStrength > 1
         let fRefractionStrength := 1
     endif
