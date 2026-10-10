@@ -4,3 +4,4 @@ docs
 research
 SOURCE_ESP
 dist
+scripts/__pycache__

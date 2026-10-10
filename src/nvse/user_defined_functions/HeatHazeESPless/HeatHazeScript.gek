@@ -79,7 +79,7 @@ begin function {}
         endif
         
         ; Check if we have the model file
-        if eval !(SetModelPath "rwle\weather\heathaze\heathaze_torus.nif" rHazeBase)
+        if eval !(SetModelPath "heathaze\heathaze_cylinder.nif" rHazeBase)
             Print "[HeatHazeESPless] Can't find the heat haze model file, stopping script."
             return
         endif

@@ -24,17 +24,17 @@
                     ]
                 },
                 "2": {
-                    "title": "Noon Scale",
+                    "title": "Haze Spread",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Adjust the mesh scale used by the time-of-day curve. Larger values expand the haze spheres and their distance from the centre. This does not change shader refraction strength.",
+                    "mouse": "Adjusts how far the haze spreads around you. Higher values enlarge the haze spheres and place them farther away.",
                     "vars": [
                         { "configINI": "Settings:NoonScale", "default": 4.0 }
                     ],
                     "scale": {
                         "valueDecimal": 2,
                         "valueIncrement": 0.1,
-                        "valueMin": 0.5,
+                        "valueMin": 0.1,
                         "valueMax": 20.0
                     }
                 }
