@@ -19,6 +19,8 @@ begin function {}
     ref rHaze ; The actual haze object
     ref rWeathers ; List of weathers that the haze effect is enabled for
     float fHazeSpread ; INI setting to use for scaling
+    float fHazeIntensityMultiplier ; INI setting to adjust haze strength
+    float fRefractionStrength ; Final strength supplied to the NIF controller
 
     ; 14 is the player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
@@ -50,6 +52,12 @@ begin function {}
     let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze.ini"
     if eval fHazeSpread <= 0
         let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
+    endif
+
+    ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
+    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "HeatHaze.ini"
+    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "HeatHaze.ini") == ""
+        let fHazeIntensityMultiplier := 1.00
     endif
 
     ; Get the cached base for reference firstly
@@ -136,9 +144,13 @@ begin function {}
     ; Apply on setup/MCM reload to both new and reused objects.
     rHaze.SetScale (fHazeSpread * 2)
 
-    ; Setting the strength of the haze to be 1/10th of the haze spread scale
-    ; At distance, the haze is way weaker so we need to up the strength
-    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Strength" (fHazeSpread * 0.1)
+    ; Calculating the refreraction strength, since it goes from 0 -> 1 in the .nif
+    let fRefractionStrength := fHazeSpread * 0.1 * fHazeIntensityMultiplier
+    
+    if eval fRefractionStrength > 1
+        let fRefractionStrength := 1
+    endif
+    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Strength" fRefractionStrength
 
     ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
     let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"

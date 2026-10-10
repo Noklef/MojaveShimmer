@@ -37,6 +37,21 @@
                         "valueMin": 0.5,
                         "valueMax": 2.5
                     }
+                },
+                "3": {
+                    "title": "Haze Intensity Multiplier",
+                    "enable": 1,
+                    "type": 2.5,
+                    "mouse": "Adjust distortion strength. 1 keeps normal intensity, 0 removes distortion, and 2 doubles it. Changes apply when you return to the game.",
+                    "vars": [
+                        { "configINI": "Settings:HazeIntensityMultiplier", "default": 1.0 }
+                    ],
+                    "scale": {
+                        "valueDecimal": 2,
+                        "valueIncrement": 0.1,
+                        "valueMin": 0.5,
+                        "valueMax": 2.5
+                    }
                 }
             }
         }
