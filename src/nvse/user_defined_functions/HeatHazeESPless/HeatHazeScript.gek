@@ -194,6 +194,17 @@ begin function {}
             ListAddForm rWeathers (GetFormFromMod "LonesomeRoad.esm" "009C2B") ; NVDLC04HRWeatherClear
         endif
 
+        ; TTW's Pitt DLC overrides these existing FalloutNV.esm weather forms.
+        if eval IsModLoaded "ThePitt.esm"
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC2") ; DLC01PittWthrBasic01
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC6") ; DLC01PittWthrBridge01
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC7") ; DLC01PittWthrSteelYard02
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC5") ; DLC01PittWthrUptown01
+        endif
+        if eval IsModLoaded "BrokenSteel.esm"
+            ListAddForm rWeathers (GetFormFromMod "BrokenSteel.esm" "008A0D") ; DLC03AAFBWeather
+        endif
+
         ; Finally storing the list for later usage
         rPlayer.AuxVarSetRef "*_HeatHazeESPless.Weathers" rWeathers
     endif
