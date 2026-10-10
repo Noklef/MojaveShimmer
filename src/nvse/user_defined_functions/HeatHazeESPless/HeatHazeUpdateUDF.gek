@@ -2,6 +2,7 @@ begin function {}
     ref rPlayer ; Player reference
     ref rHaze ; The actual haze object
     ref rWeathers ; List of weathers that the haze effect is enabled for
+    int bDebug ; Debug mode flag, cached on the haze object by setup
 
     ; Player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14"
@@ -14,6 +15,9 @@ begin function {}
     if eval !rHaze || !(IsReference rHaze)
         return
     endif
+
+    ; Read debug mode once per frame, then reuse it below
+    let bDebug := rHaze.AuxVarGetFlt "*_HeatHazeESPless.Debug"
 
     ; Gated behing if the player is inside, or if the player is submerged in water at 87.5% or more (from original mod)
     if eval rPlayer.IsInInterior == 1 || rPlayer.GetWaterImmersionPerc >= 0.875
@@ -57,6 +61,12 @@ begin function {}
             float fRefractionStrength = rHaze.AuxVarGetFlt "*_HeatHazeESPless.Strength"
             rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 0 fRefractionStrength
             rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 1 fRefractionStrength
+
+            ; Debug: show the wireframe outline (flag 0 is Hidden). The .nif stores it hidden and 3D reloads
+            ; restore that, so this only needs calling while debug is on; setup hides it when switched off.
+            if eval bDebug
+                rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 0
+            endif
 
             ; This follows the player, but not the camera (?), so woudl third person break?
             ; I think this can be potentially changed to be dynamic, since it feels super close....

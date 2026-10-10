@@ -160,7 +160,6 @@ def main():
     if not mesh.is_file():
         raise FileNotFoundError(f"Missing mesh: {mesh}")
     debug_texture = Path("Textures/heathaze/haze_d_debug.dds")
-    diffuse_texture = Path("Textures/heathaze/haze_d.dds")
     mesh_data = package_mesh(mesh.read_bytes())
     if args.debug:
         if not (source / debug_texture).is_file():
@@ -176,7 +175,7 @@ def main():
             relative = path.relative_to(source)
             if relative.parts[0] == "Meshes" and relative != mesh_path:
                 continue
-            if relative == (diffuse_texture if args.debug else debug_texture):
+            if relative == debug_texture and not args.debug:
                 continue
             if relative == mesh_path:
                 archive.writestr(relative.as_posix(), mesh_data)

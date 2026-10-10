@@ -42,7 +42,7 @@
                     "title": "Haze Intensity Multiplier",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Adjust distortion strength. 1 keeps normal intensity, 0 removes distortion, and 2 doubles it. Changes apply when you return to the game.",
+                    "mouse": "Adjust distortion strength",
                     "vars": [
                         { "configINI": "Settings:HazeIntensityMultiplier", "default": 1.0 }
                     ],
@@ -52,6 +52,15 @@
                         "valueMin": 0.5,
                         "valueMax": 2.5
                     }
+                },
+                "4": {
+                    "title": "Debug Mode",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": "Shows a green outline for the haze effect (to see where it starts).",
+                    "vars": [
+                        { "configINI": "Debug:bDebug", "default": 0 }
+                    ]
                 }
             }
         }

@@ -20,8 +20,11 @@ begin function {}
     ref rWeathers ; List of weathers that the haze effect is enabled for
     float fRefractionStrength ; Refraction strength supplied to the NIF controller
     float fScale ; Scale that's calculated from the haze spread
+
     float fHazeSpread ; INI setting to use for scaling
     float fHazeIntensityMultiplier ; INI setting to adjust haze strength
+    int bDebug ; INI setting for the debug wireframe
+    int bEnabled ; INI setting for on/off toggle
 
     ; 14 is the player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
@@ -150,10 +153,21 @@ begin function {}
     ; Calculating the refreraction strength, since it goes from 0 -> 1 in the .nif
     let fRefractionStrength := fHazeSpread * 0.1 * fHazeIntensityMultiplier
     
+    ; Set the strength to 1 if it's greater, since the nif can't have a higher than 1 refraction
     if eval fRefractionStrength > 1
         let fRefractionStrength := 1
     endif
     rHaze.AuxVarSetFlt "*_HeatHazeESPless.Strength" fRefractionStrength
+
+    ; Check if the actual mod is enabled in the .INI file (used at the end to register the update)
+    let bEnabled := (GetINIString "General:bEnabled" "HeatHaze.ini") != "0"
+
+    ; Cache the MCM/INI choice; the update function shows the outline once 3D is loaded.
+    let bDebug := (GetINIString "Debug:bDebug" "HeatHaze.ini") == "1"
+    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Debug" bDebug
+
+    ; Hide it here so the debug off via MCM doesn't leave it showing
+    rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 1
 
     ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
     let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
@@ -212,10 +226,8 @@ begin function {}
         rPlayer.AuxVarSetRef "*_HeatHazeESPless.Weathers" rWeathers
     endif
 
-    ; Check if the actual mod is enabled in the .INI file
-    if eval (GetINIString "General:bEnabled" "HeatHaze.ini") != "0"
-        
-        ; Now we need to register the update function.
+    ; Only register the function when enabled
+    if eval bEnabled
         ; Register it, call it every frame, and 1 + 8 (run during gameplay + unregister when loading / saving / returning to main menu)
         rPlayer.SetGameMainLoopCallback rUpdate 1 1 9
     endif
