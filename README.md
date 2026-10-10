@@ -10,7 +10,9 @@ The main goal of this was following the `ESP-less` trend of this mod; since I'm 
 
 ## So what's changed (so far)?
 
-This has been converted to an ESP-less version for starters, so no need for the `.ESP` file in the main mod.
+- This has been converted to an ESP-less version for starters, so no need for the `.ESP` file in the main mod.
+- Updated mesh to be a bit simpler for what a haze effect essentially is (instead of the spheres)
+- Updated to allow for editing the configuration through MCM (optional)
 
 ## Installation
 - TBA
@@ -19,9 +21,9 @@ This has been converted to an ESP-less version for starters, so no need for the 
 Game plan is:
 1. ~~Convert it to ESP-less version~~ ***Done***
 2. ~~Set-up scripts to add variance to the `.nif`~~ ***Done***
-3. Optimize the ccode a little bit
+3. Optimize the code a little bit
 4. Make it a bit more configurable
-5. Allow it to be controllable / togglable through MCM
+5. ~~Allow it to be controllable / togglable through MCM~~ ***Done***
 
 ## AI Disclosure:
 I'm not going to deny the usage of AI for working on this; although I wouldn't consider the project to be "one-shot" / "Vibe Coded" by a long stretch. Collaborative, rather than acting as a Manager (I like to think).
@@ -31,6 +33,7 @@ AI isn't perfect, and i know that 100%; that's why I've used it more as a collab
 Ai was used in the following ways:
 - Helping me find resources to port the logic over / researching how NVSE plugins are implemented in this fashion.
 - Correcting my mistakes in implementation (i.e. reference fixes, reviewing, looking for anything specifically GECK/NVSE related that I didn't necessarily realise)
+- Helping me update / modify the [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to work with recent versions of blender.
 - Generating the GitHub release scripts / `heat_hase_variance_generation.py`
 
 Model used: `GPT-6.1 Sol`

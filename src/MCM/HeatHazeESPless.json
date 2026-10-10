@@ -18,7 +18,7 @@
                     "title": "Enable Heat Haze",
                     "enable": 1,
                     "type": 5,
-                    "mouse": "Enable or disable heat haze. Changes apply when you return to the game.",
+                    "mouse": "Enable or disable the heat haze.",
                     "vars": [
                         { "configINI": "General:bEnabled", "default": 1 }
                     ]
@@ -27,15 +27,15 @@
                     "title": "Haze Spread",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Adjusts how far the haze spreads around you. Higher values enlarge the haze spheres and place them farther away.",
+                    "mouse": "Set the distance that the heat haze effect starts at.",
                     "vars": [
-                        { "configINI": "Settings:NoonScale", "default": 4.0 }
+                        { "configINI": "Settings:HazeSpread", "default": 1.0 }
                     ],
                     "scale": {
                         "valueDecimal": 2,
                         "valueIncrement": 0.1,
-                        "valueMin": 0.1,
-                        "valueMax": 20.0
+                        "valueMin": 0.5,
+                        "valueMax": 2.5
                     }
                 }
             }
