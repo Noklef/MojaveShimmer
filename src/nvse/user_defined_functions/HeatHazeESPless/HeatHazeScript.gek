@@ -173,6 +173,27 @@ begin function {}
         ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176574") ; NVWastelandClearNight
         ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176575") ; NVWastelandClearEast
 
+        ; Extras from the vanilla FNV .esm references
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173689") ; NVHooverDamWeather
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1735E9") ; NVlegateCampWeather
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "11E6E2") ; NVWastelandClearWindy
+
+        ; In case anyone doesn't have these mods... idk why anyone wouldn't have these at this point though...
+        ; These were tags as 'Pleasant', so not really tested
+        if eval IsModLoaded "HonestHearts.esm"
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "009908") ; NVDLC02Weather
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00EEB0") ; NVDLC02ZionValleyWeather
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E718") ; NVDLC02EasternVirginWeather
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E719") ; NVDLC02ThreeMarysWeather
+        endif
+        if eval IsModLoaded "OldWorldBlues.esm"
+            ListAddForm rWeathers (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
+        endif
+        if eval IsModLoaded "LonesomeRoad.esm"
+            ListAddForm rWeathers (GetFormFromMod "LonesomeRoad.esm" "009C2B") ; NVDLC04HRWeatherClear
+        endif
+
         ; Finally storing the list for later usage
         rPlayer.AuxVarSetRef "*_HeatHazeESPless.Weathers" rWeathers
     endif
