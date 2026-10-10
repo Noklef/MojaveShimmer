@@ -1,6 +1,6 @@
 # Heat Haze - ESPless version
 
-This is a conversion of doodlum's [Heat Haze](https://www.nexusmods.com/newvegas/mods/76286) mod into an ESP-less version.
+This is a conversion of doodlum's [Heat Haze](https://www.nexusmods.com/newvegas/mods/76286) mod into an ESP-less version. Originally i was going to be extending upon it; however i felt that the haze effect that had been created didn't feel... right. 
 
 ## Why?
 
@@ -13,6 +13,7 @@ The main goal of this was following the `ESP-less` trend of this mod; since I'm 
 - This has been converted to an ESP-less version for starters, so no need for the `.ESP` file in the main mod.
 - Updated mesh to be a bit simpler for what a haze effect essentially is (instead of the spheres)
 - Updated to allow for editing the configuration through MCM (optional)
+- Haze intendity modifier / distance setting
 
 ## Installation
 - TBA
@@ -21,7 +22,7 @@ The main goal of this was following the `ESP-less` trend of this mod; since I'm 
 1. ~~Convert it to ESP-less version~~ ***Done***
 2. ~~Set-up scripts to add variance to the `.nif`~~ ***Done***
 3. Optimize the code a little bit
-4. Make it a bit more configurable
+4. ~~Make it a bit more configurable~~ ***Done***
 5. ~~Allow it to be controllable / togglable through MCM~~ ***Done***
 
 ## AI Disclosure:
@@ -31,7 +32,7 @@ AI isn't perfect, and i know that 100%; that's why I've used it more as a collab
 
 Ai was used in the following ways:
 - Helping me find resources to port the logic over / researching how NVSE plugins are implemented in this fashion.
-- Correcting my mistakes in implementation (i.e. reference fixes, reviewing, looking for anything specifically GECK/NVSE related that I didn't necessarily realise)
+- Correcting my mistakes in implementation (i.e. reference fixes, reviewing, looking for anything specifically GECK/NVSE related that I didn't necessarily realise) + Debugging nuances
 - Helping me update / modify the [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to work with recent versions of blender.
 - Generating the GitHub release scripts / `heat_hase_variance_generation.py`
 
