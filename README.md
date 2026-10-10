@@ -17,8 +17,7 @@ The main goal of this was following the `ESP-less` trend of this mod; since I'm 
 ## Installation
 - TBA
 
-## Plans
-Game plan is:
+## Game Plan
 1. ~~Convert it to ESP-less version~~ ***Done***
 2. ~~Set-up scripts to add variance to the `.nif`~~ ***Done***
 3. Optimize the code a little bit

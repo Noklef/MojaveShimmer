@@ -136,6 +136,10 @@ begin function {}
     ; Apply on setup/MCM reload to both new and reused objects.
     rHaze.SetScale (fHazeSpread * 2)
 
+    ; Setting the strength of the haze to be 1/10th of the haze spread scale
+    ; At distance, the haze is way weaker so we need to up the strength
+    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Strength" (fHazeSpread * 0.1)
+
     ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
     let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
     if eval !rWeathers || (GetType rWeathers) != 85 ; 85 is checking if it's a FormList

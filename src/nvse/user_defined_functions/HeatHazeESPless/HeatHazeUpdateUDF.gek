@@ -45,6 +45,12 @@ begin function {}
             if rHaze.GetDisabled
                 rHaze.Enable
             endif
+            ; Setting up the hidden helper's texture controller to control refraction strength
+            ; This is a bit of a hack tbh
+            float fRefractionStrength = rHaze.AuxVarGetFlt "*_HeatHazeESPless.Strength"
+            rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 0 fRefractionStrength
+            rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 1 fRefractionStrength
+
             ; This follows the player, but not the camera (?), so woudl third person break?
             ; I think this can be potentially changed to be dynamic, since it feels super close....
             rHaze.MoveTo rPlayer 0 0 10
