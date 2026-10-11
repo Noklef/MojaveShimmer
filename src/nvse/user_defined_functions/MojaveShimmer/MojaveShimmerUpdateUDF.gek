@@ -26,21 +26,24 @@ begin function {}
         float fOutgoingShimmer = ((IsRefInList rWeathers (GetOutgoingWeather)) != -1) * (1 - GetCurrentWeatherPercent)
         float fIncomingShimmer = ((IsRefInList rWeathers (GetCurrentWeather)) != -1) * GetCurrentWeatherPercent
 
-        ; New logic for ramping up / tearing down the haze (potentially put these in MCM)
-        float fStartHour = 6 ; Haze starts fading in
-        float fEndHour = 18 ; Haze fully faded out
-        float fTransitionHours = 2 ; How many hours the fade 
-        float fFadeOutHour = fEndHour - fTransitionHours ; Fade out starts
+        ; se the time factor here in case of always enabled
+        float fTimeFactor = 1
+        if eval !(rHaze.AuxVarGetFlt "*_MojaveShimmer.AlwaysEnabled")
+            ; Get the values we need
+            float fStartHour = rHaze.AuxVarGetFlt "*_MojaveShimmer.StartHour" 
+            float fEndHour = rHaze.AuxVarGetFlt "*_MojaveShimmer.EndHour"
+            float fFadeHours = rHaze.AuxVarGetFlt "*_MojaveShimmer.FadeHours"
 
-        float fCurrentTime = GetCurrentTime
-        float fTimeFactor = 0
-        if eval fCurrentTime > fStartHour && fCurrentTime < fEndHour ; If between the active hours
-            if eval fCurrentTime < fStartHour + fTransitionHours ; Morning transition, start hour plus the transition
-                fTimeFactor = (fCurrentTime - fStartHour) / fTransitionHours
-            elseif eval fCurrentTime > fEndHour - fTransitionHours ; Evening transition, end hour minus the transition
-                fTimeFactor = (fEndHour - fCurrentTime) / fTransitionHours
-            else
-                fTimeFactor = 1 ; as intense as it should be
+            float fCurrentTime = GetCurrentTime
+            fTimeFactor = 0
+            if eval fCurrentTime > fStartHour && fCurrentTime < fEndHour ; If between the active hours
+                if eval fCurrentTime < fStartHour + fFadeHours ; Morning transition, start hour plus the fade
+                    fTimeFactor = (fCurrentTime - fStartHour) / fFadeHours
+                elseif eval fCurrentTime > fEndHour - fFadeHours ; Evening transition, end hour minus the fade
+                    fTimeFactor = (fEndHour - fCurrentTime) / fFadeHours
+                else
+                    fTimeFactor = 1 ; as intense as it should be
+                endif
             endif
         endif
 

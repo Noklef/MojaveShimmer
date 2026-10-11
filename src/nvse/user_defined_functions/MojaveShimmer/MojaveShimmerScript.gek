@@ -11,20 +11,29 @@ begin function {}
     ;       - https://geckwiki.com/index.php?title=PlaceAtMe
     ;       - https://geckwiki.com/index.php?title=SetReferenceFlag
 
-    ref rPlayer ; Player reference
-    ref rUpdate ; Update logic script reference (compiled)
-    ref rCleanup ; Cleanup logic script reference (compiled)
-    ref rTemplate ; The base we clone for the heat haze effect (NelsonsLightBeamAct)
-    ref rHazeBase ; Our custom activator we clone with the heat mesh assigned to it
-    ref rHaze ; The actual haze object
-    ref rWeathers ; List of weathers that the haze effect is enabled for
-    float fRefractionStrength ; Refraction strength supplied to the NIF controller
-    float fScale ; Scale that's calculated from the haze spread
+    ref rPlayer                 ; Player reference
+    ref rUpdate                 ; Update logic script reference (compiled)
+    ref rCleanup                ; Cleanup logic script reference (compiled)
+    ref rTemplate               ; The base we clone for the heat haze effect (NelsonsLightBeamAct)
+    ref rHazeBase               ; Our custom activator we clone with the heat mesh assigned to it
+    ref rHaze                   ; The actual haze object
+    ref rWeathers               ; List of weathers that the haze effect is enabled for
+    float fRefractionStrength   ; Refraction strength supplied to the NIF controller
+    float fScale                ; Scale that's calculated from the haze spread
 
-    float fHazeSpread ; INI setting to use for scaling
-    float fHazeIntensityMultiplier ; INI setting to adjust haze strength
-    int bDebug ; INI setting for the debug wireframe
-    int bEnabled ; INI setting for on/off toggle
+    int bEnabled                    ; INI - Enable / Disable the mod
+    int bDebug                      ; INI - Enable / Disable the debug wireframe
+    int bAlwaysEnabled              ; INI - Ignore the time of day
+    float fHazeSpread               ; INI - used for scaling
+    float fHazeIntensityMultiplier  ; INI - Haze strength
+    float fStartHour                ; INI - The hour the haze starts fading in
+    float fEndHour                  ; INI - The hour the haze has fully faded out
+    float fFadeHours                ; INI - How many hours the fade in / out takes
+
+
+    ; ==============================================
+    ; Script Compilation Checking / Reference Saving
+    ; ==============================================
 
     ; 14 is the player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
@@ -58,6 +67,66 @@ begin function {}
         call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
         return
     endif
+
+    ; =======================
+    ; INI Fetching / Checking
+    ; =======================
+
+    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "MojaveShimmer.ini"
+
+    ; Do some checks to clamp down the haze spread if it's too wild
+    if eval fHazeSpread <= 0
+        let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
+    elseif eval fHazeSpread < 0.5
+        let fHazeSpread := 0.5 ; Clamp to the MCM minimum, rather than resetting to the default (0.5 itself is a valid MCM choice)
+    elseif eval fHazeSpread > 2.5
+        let fHazeSpread := 2.5 ; Clamps the max scale to 10, any more than that doesn't render it properly for some reason
+    endif
+
+    ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
+    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini"
+    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
+        let fHazeIntensityMultiplier := 1.00
+    endif
+
+    let bAlwaysEnabled := (GetINIString "Timing:bAlwaysEnabled" "MojaveShimmer.ini") == "1"
+
+    ; Get the start hour from the INI, and set it to a default if invalid
+    let fStartHour := GetINIFloat "Timing:StartHour" "MojaveShimmer.ini"
+    if eval (GetINIString "Timing:StartHour" "MojaveShimmer.ini") == ""
+        let fStartHour := 6
+    endif
+
+    ; Get the end hour from the INI, and set it to a default if invalid
+    let fEndHour := GetINIFloat "Timing:EndHour" "MojaveShimmer.ini"
+    if eval (GetINIString "Timing:EndHour" "MojaveShimmer.ini") == ""
+        let fEndHour := 19
+    endif
+
+    ; Set the hour to defaults if any misconfiguration
+    if eval fStartHour < 0 || fEndHour > 23 || fEndHour <= fStartHour
+        let fStartHour := 6
+        let fEndHour := 19
+    endif
+
+    ; Get the fade length from the INI, and set it to defaults if invalid
+    let fFadeHours := GetINIFloat "Timing:FadeHours" "MojaveShimmer.ini"
+    if eval (GetINIString "Timing:FadeHours" "MojaveShimmer.ini") == ""
+        let fFadeHours := 2
+    elseif eval fFadeHours < 0
+        let fFadeHours := 0
+    endif
+
+    ; Small bit of logic to make the fades not overlap
+    if eval fFadeHours > (fEndHour - fStartHour) / 2
+        let fFadeHours := (fEndHour - fStartHour) / 2
+    endif
+
+    let bDebug := (GetINIString "Debug:bDebug" "MojaveShimmer.ini") == "1"
+
+    ; ==============
+    ; Weathers Setup
+    ; ==============
 
     ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
     let rWeathers := rPlayer.AuxVarGetRef "*_MojaveShimmer.Weathers"
@@ -115,6 +184,10 @@ begin function {}
         ; Finally storing the list for later usage
         rPlayer.AuxVarSetRef "*_MojaveShimmer.Weathers" rWeathers
     endif
+
+    ; ==============================
+    ; Haze Reference Setup / Caching
+    ; ==============================
 
     ; Get the cached base for reference firstly
     let rHazeBase := rPlayer.AuxVarGetRef "*_MojaveShimmer.Base"
@@ -194,26 +267,14 @@ begin function {}
     ; Hide during setup. The update function enables it on weather / time conditions
     rHaze.Disable
 
-    ; Read & work with the [Settings] HazeSpread value from the ini file
-    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "MojaveShimmer.ini"
 
-    ; Do some checks to clamp down the haze spread if it's too wild
-    if eval fHazeSpread <= 0
-        let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
-    elseif eval fHazeSpread < 0.5
-        let fHazeSpread := 0.5 ; Clamp to the MCM minimum, rather than resetting to the default (0.5 itself is a valid MCM choice)
-    elseif eval fHazeSpread > 2.5
-        let fHazeSpread := 2.5 ; Clamps the max scale to 10, any more than that doesn't render it properly for some reason
-    endif
-
-    ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
-    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini"
-    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
-        let fHazeIntensityMultiplier := 1.00
-    endif
+    ; ===============
+    ; Variable saving
+    ; ===============
 
     ; Setting the scale to 4x the haze spread value (which is 4x the mesh's size)
     let fScale := fHazeSpread * 4
+    
     ; Store it so the update function can re-apply it if it doesn't stick while disabled / in menus
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Scale" fScale
     rHaze.SetScale fScale
@@ -227,8 +288,13 @@ begin function {}
     endif
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Strength" fRefractionStrength
 
-    ; Fetching and setting the debug INI option
-    let bDebug := (GetINIString "Debug:bDebug" "MojaveShimmer.ini") == "1"
+    ; Store the timing settings for the update function
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.AlwaysEnabled" bAlwaysEnabled
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.StartHour" fStartHour
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.EndHour" fEndHour
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.FadeHours" fFadeHours
+
+    ; Store the debug option for the update function
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Debug" bDebug
 
     ; Hide it here so the debug off via MCM doesn't leave it showing

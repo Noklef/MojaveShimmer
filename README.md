@@ -12,10 +12,13 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 ## Features
 - `ESP-less` implementation of a distance Heat Shimmer effect.
 - Custom (albeit simple) mesh for displaying the haze effect (literally just a cylinder with custom textures).
-- Configurable options for `intensity`, `distance`, ~~`start/end times`~~ (TBD) through [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642).
-- Debug wireframe option to configure the distance / intensity to your liking.
-- *Should* work with any weather options that have been tagged as `pleasant` (I.E. weather mods, but i haven't tested many yet...)
-- FNV / TTW Compatible
+- Configurable options for:
+  - Haze `Intensity` / `Distance`
+  - Haze `Start / End times` / `Transition time`
+  - `Always` being enabled
+  - `Debug` mode with a wireframe showing the distance the effect shows at.
+- [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642) support.
+- TTW Compatible
 
 ## TL;DR on how it works:
 - Draws a tall cylinder around the player

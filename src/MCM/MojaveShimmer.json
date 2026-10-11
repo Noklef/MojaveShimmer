@@ -11,28 +11,33 @@
             "listTitle": "Settings",
             "pageTitle": "Mojave Shimmer Settings",
             "active": 1,
-            "columns": 1,
+            "columns": 2,
             "enable": 1,
             "options": {
                 "1": {
-                    "title": "General",
-                    "enable": 1,
-                    "type": 0
-                },
-                "2": {
                     "title": "Enable Mojave Shimmer",
                     "enable": 1,
                     "type": 5,
-                    "mouse": "Enable or disable the heat haze.",
+                    "mouse": "Enable / Disable Mojave Shimmer entirely.",
                     "vars": [
                         { "configINI": "General:bEnabled", "default": 1 }
                     ]
                 },
-                "3": {
-                    "title": "Haze Spread Distance",
+                "5": {
+                    "title": "Haze",
+                    "enable": 1,
+                    "type": 0
+                },
+                "6": {
+                    "title": "Timing",
+                    "enable": 1,
+                    "type": 0
+                },
+                "7": {
+                    "title": "Spread Distance",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Set the distance that the heat haze effect starts at. At further distances, increase the Intensity Multiplier",
+                    "mouse": "Set the distance that the heat haze effect starts at. At further distances, increase the Intensity Multiplier.",
                     "vars": [
                         { "configINI": "Settings:HazeSpread", "default": 1.0 }
                     ],
@@ -44,8 +49,18 @@
                         "valueMax": 2.5
                     }
                 },
-                "4": {
-                    "title": "Haze Intensity Multiplier",
+                "8": {
+                    "title": "Always Enabled",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": "Ignore the time of day: the heat haze shows at full strength whenever the weather allows.",
+                    "vars": [
+                        { "configINI": "Timing:bAlwaysEnabled", "default": 0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "9": {
+                    "title": "Intensity Multiplier",
                     "enable": 1,
                     "type": 2.5,
                     "mouse": "Adjusts the strength of the distortion effect.",
@@ -60,16 +75,70 @@
                         "valueMax": 2.5
                     }
                 },
-                "6": {
+                "10": {
+                    "title": "Haze Starts",
+                    "enable": 1,
+                    "type": 2,
+                    "mouse": "Hour when the heat haze starts fading in. Ignored while Always Enabled is ticked.",
+                    "vars": [
+                        { "configINI": "Timing:StartHour", "default": 6 }
+                    ],
+                    "scale": {
+                        "valueDecimal": 0,
+                        "valueIncrement": 1,
+                        "valueMin": 0,
+                        "valueMax": 23,
+                        "suffix": ":00"
+                    },
+                    "suffix": ":00",
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "12": {
+                    "title": "Haze Ends",
+                    "enable": 1,
+                    "type": 2,
+                    "mouse": "Hour when the heat haze has fully faded out. Must be later than Haze Starts. Ignored while Always Enabled is ticked.",
+                    "vars": [
+                        { "configINI": "Timing:EndHour", "default": 19 }
+                    ],
+                    "scale": {
+                        "valueDecimal": 0,
+                        "valueIncrement": 1,
+                        "valueMin": 0,
+                        "valueMax": 23,
+                        "suffix": ":00"
+                    },
+                    "suffix": ":00",
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "13": {
                     "title": "Debug",
                     "enable": 1,
                     "type": 0
                 },
-                "7": {
+                "14": {
+                    "title": "Fade Length",
+                    "enable": 1,
+                    "type": 2.5,
+                    "mouse": "How long the effect takes to fade in at the start, and out at the end. Ignored while Always Enabled is ticked.",
+                    "vars": [
+                        { "configINI": "Timing:FadeHours", "default": 2.0 }
+                    ],
+                    "scale": {
+                        "valueDecimal": 1,
+                        "valueIncrement": 0.5,
+                        "valueMin": 0,
+                        "valueMax": 4,
+                        "suffix": "h"
+                    },
+                    "suffix": "h",
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "15": {
                     "title": "Debug Mode",
                     "enable": 1,
                     "type": 5,
-                    "mouse": "Shows a green outline for the haze effect, to see the distance it appears at + the strength of it.",
+                    "mouse": "Shows a green outline for the haze effect. This is the distance the haze will appear.",
                     "vars": [
                         { "configINI": "Debug:bDebug", "default": 0 }
                     ],
