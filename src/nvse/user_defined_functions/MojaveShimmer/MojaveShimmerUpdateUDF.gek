@@ -66,8 +66,9 @@ begin function {}
             endif
 
             ; This follows the player, but not the camera (?), so woudl third person break?
-            ; I think this can be potentially changed to be dynamic, since it feels super close....
             rHaze.MoveTo rPlayer 0 0 10
+            ; Copy also rotates with player, so we need to reset it  (test this)
+            rHaze.SetAngleEx 0 0 0
         else
             ; Keep the object for reuse; hide it while conditions fail
             call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")

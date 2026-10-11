@@ -87,7 +87,7 @@ begin function {}
         ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "11E6E2") ; NVWastelandClearWindy
 
         ; In case anyone doesn't have these mods... idk why anyone wouldn't have these at this point though...
-        ; These were tags as 'Pleasant', so not really tested
+        ; These were tags as 'Pleasant', so not really tested 100%
         if eval IsModLoaded "HonestHearts.esm"
             ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "009908") ; NVDLC02Weather
             ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00EEB0") ; NVDLC02ZionValleyWeather
