@@ -69,7 +69,7 @@ begin function {}
             return
         endif
 
-        ; Codes from FNVEdit's Editor IDs from the original mod's form list 
+        ; Codes from FNVEdit's Editor IDs
         ; Mod only created FNV versions; not FO3 / TTW specific ones
         ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "FFC88")  ; NVWastelandClear
         ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "10B599") ; NVCemeteryIntro

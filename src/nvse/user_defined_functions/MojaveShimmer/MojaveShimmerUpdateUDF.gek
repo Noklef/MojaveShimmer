@@ -16,7 +16,7 @@ begin function {}
         return
     endif
 
-    ; Gated behing if the player is inside, or if the player is submerged in water at 87.5% or more (from original mod)
+    ; Gated behing if the player is inside, or if the player is submerged in water at 87.5% or more
     if eval rPlayer.IsInInterior == 1 || rPlayer.GetWaterImmersionPerc >= 0.875
         ; Call the disable compile
         call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
@@ -25,23 +25,30 @@ begin function {}
         ; Will probably re-write to be a bit better or something
         float fOutgoingShimmer = ((IsRefInList rWeathers (GetOutgoingWeather)) != -1) * (1 - GetCurrentWeatherPercent)
         float fIncomingShimmer = ((IsRefInList rWeathers (GetCurrentWeather)) != -1) * GetCurrentWeatherPercent
-        float fCurrentTime = GetCurrentTime
 
-        ; Logic for this is: Strongest at noon, forwards and backwards from that de-amplifies it
-        ; Will also probably re-write to be a bit ebetter
-        if fCurrentTime > 12
-            fCurrentTime = ((24 - fCurrentTime) + 0.001) / 12
-        else
-            fCurrentTime = (fCurrentTime + 0.001) / 12
+        ; New logic for ramping up / tearing down the haze (potentially put these in MCM)
+        float fStartHour = 6 ; Haze starts fading in
+        float fEndHour = 18 ; Haze fully faded out
+        float fTransitionHours = 2 ; How many hours the fade 
+        float fFadeOutHour = fEndHour - fTransitionHours ; Fade out starts
+
+        float fCurrentTime = GetCurrentTime
+        float fTimeFactor = 0
+        if eval fCurrentTime > fStartHour && fCurrentTime < fEndHour ; If between the active hours
+            if eval fCurrentTime < fStartHour + fTransitionHours ; Morning transition, start hour plus the transition
+                fTimeFactor = (fCurrentTime - fStartHour) / fTransitionHours
+            elseif eval fCurrentTime > fEndHour - fTransitionHours ; Evening transition, end hour minus the transition
+                fTimeFactor = (fEndHour - fCurrentTime) / fTransitionHours
+            else
+                fTimeFactor = 1 ; as intense as it should be
+            endif
         endif
 
-        ; Original mod logic to calculate the intentisy of the effect
-        float fShimmerIntensity = (fOutgoingShimmer + fIncomingShimmer) * fCurrentTime
-        fShimmerIntensity += 0.001
+        ; How strong the effect is right now from 0 -> 1, using the time factor to ramp it in
+        float fShimmerIntensity = (fOutgoingShimmer + fIncomingShimmer) * fTimeFactor
 
-        ; Oriignal mod logic makes it only enable above 0.5
-        ; Need to go through this and figure out if we wanna parameterize it
-        if fShimmerIntensity > 0.5
+        ; Only show it when there's something to see; the 0.01 just stops it enabling at a strength of ~0
+        if fShimmerIntensity > 0.01
             ; If it's disabled, enable it (feels hacky?)
             if rHaze.GetDisabled
                 rHaze.Enable
@@ -55,7 +62,8 @@ begin function {}
 
             ; Setting up the hidden helper's texture controller to control refraction strength
             ; This is a bit of a hack tbh
-            float fRefractionStrength = rHaze.AuxVarGetFlt "*_MojaveShimmer.Strength"
+            float fRefractionStrength = (rHaze.AuxVarGetFlt "*_MojaveShimmer.Strength") * fShimmerIntensity
+
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 0 fRefractionStrength
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 1 fRefractionStrength
 
