@@ -1,4 +1,4 @@
-# Mojave Shimmer - A heat
+# Mojave Shimmer
 
 ***You ever look into the distance in New Vegas, and think therte's something... missing?*** This mod aims to add a [Heat Haze](https://en.wikipedia.org/wiki/Mirage#Heat_haze)-like effect into New Vegas. Honestly it's a barebones implementation, but an implementation nontheless.
 
@@ -12,7 +12,7 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 ## Features
 - `ESP-less` implementation of a distance Heat Shimmer effect.
 - Custom (albeit simple) mesh for displaying the haze effect (literally just a cylinder with custom textures).
-- Configurable options for `intensity`, `distance`, ~~`start/end times`~~ (TBD) through [MCM](https://www.nexusmods.com/newvegas/mods/42507).
+- Configurable options for `intensity`, `distance`, ~~`start/end times`~~ (TBD) through [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642).
 - Debug wireframe option to configure the distance / intensity to your liking.
 - *Should* work with any weather options that have been tagged as `pleasant` (I.E. weather mods, but i haven't tested many yet...)
 - FNV / TTW Compatible
@@ -52,3 +52,4 @@ Model used: `Claude Opus 5.5` (Formerly `GPT-6.1 Sol`)
 - [GECK Wiki](https://geckwiki.com/) for coming in clutch with knowledge
 - [Blender](https://www.blender.org/)
 - [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to convert the model to use in New Vegas
+- [Paint.NET](https://www.paint.net/)
