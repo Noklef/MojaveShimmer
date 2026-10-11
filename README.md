@@ -28,15 +28,6 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 ## Installation
 - TBA
 
-## Implementation Plan
-1. ~~Convert it to ESP-less version~~ ***Done***
-2. ~~Set-up scripts to add variance to the `.nif`~~ ***No need anymore***
-3. ~~Optimize the code a little bit~~ ***Done***
-4. ~~Make it a bit more configurable~~ ***Done***
-5. ~~Allow it to be controllable / togglable through MCM~~ ***Done***
-6. ~~Add a debug mode~~ ***Done***
-7. ~~Expand out the code with more options~~ ***Pretty Much Done***
-
 ## AI Disclosure:
 I'm not going to deny the usage of AI for working on this; although I wouldn't consider the project to be *"one-shot"* / *"Vibe Coded"* by a long stretch. I'd say collaborative rather than me acting as a manager (i'd like to think at least). AI isn't perfect, so it's been used more as a colaborative tool rather than a minion to do my bidding. I haven't committed anything that I blindly implemented or not understood.
 
