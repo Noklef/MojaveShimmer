@@ -15,6 +15,11 @@
             "enable": 1,
             "options": {
                 "1": {
+                    "title": "General",
+                    "enable": 1,
+                    "type": 0
+                },
+                "2": {
                     "title": "Enable Mojave Shimmer",
                     "enable": 1,
                     "type": 5,
@@ -23,7 +28,7 @@
                         { "configINI": "General:bEnabled", "default": 1 }
                     ]
                 },
-                "2": {
+                "3": {
                     "title": "Haze Spread Distance",
                     "enable": 1,
                     "type": 2.5,
@@ -31,6 +36,7 @@
                     "vars": [
                         { "configINI": "Settings:HazeSpread", "default": 1.0 }
                     ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 },
                     "scale": {
                         "valueDecimal": 2,
                         "valueIncrement": 0.25,
@@ -38,7 +44,7 @@
                         "valueMax": 2.5
                     }
                 },
-                "3": {
+                "4": {
                     "title": "Haze Intensity Multiplier",
                     "enable": 1,
                     "type": 2.5,
@@ -46,6 +52,7 @@
                     "vars": [
                         { "configINI": "Settings:HazeIntensityMultiplier", "default": 1.0 }
                     ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 },
                     "scale": {
                         "valueDecimal": 2,
                         "valueIncrement": 0.1,
@@ -53,14 +60,20 @@
                         "valueMax": 2.5
                     }
                 },
-                "4": {
+                "6": {
+                    "title": "Debug",
+                    "enable": 1,
+                    "type": 0
+                },
+                "7": {
                     "title": "Debug Mode",
                     "enable": 1,
                     "type": 5,
                     "mouse": "Shows a green outline for the haze effect, to see the distance it appears at + the strength of it.",
                     "vars": [
                         { "configINI": "Debug:bDebug", "default": 0 }
-                    ]
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 }
             }
         }
