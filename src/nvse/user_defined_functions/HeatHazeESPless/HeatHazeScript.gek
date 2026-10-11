@@ -36,7 +36,7 @@ begin function {}
         return
     endif
 
-    ; Stop updates during setup, including a manual reload with bEnabled=0.
+    ; Stop the update loop while we (re)do setup
     rPlayer.SetGameMainLoopCallback rUpdate 0
 
     ; Compile & check the cleanup function 
@@ -127,14 +127,14 @@ begin function {}
 
     ; If It hasn't been created yet, we need to create it and set it for use
     if eval !rHaze
-        ; Place the object near us (1 is behind)
+        ; Place 1 copy on the player
         let rHaze := rPlayer.PlaceAtMe rHazeBase 1
         if eval !rHaze
             Print "[HeatHazeESPless] Can't create the heat haze reference near the player, stopping script."
             return
         endif
 
-        ; Set the object to be owned (so it doesn't get deleted on cell change apparently?)
+        ; Set the object to be owned, for the cleanup function to check it doesn't delete something we didn't create
         rHaze.AuxVarSetFlt "*_HeatHazeESPless.Owner" 1
         ; Keep it persistent across cell changes
         rHaze.SetPersistent 1

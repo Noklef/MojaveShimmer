@@ -11,7 +11,7 @@ begin function {}
     ; Created weather list
     let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
 
-    ; If the haze doesn't exist, we don't need to clean up anything
+    ; If there's no valid haze ref (e.g. HeatHazeCleanupUDF erased the .Ref aux var), there's nothing to update
     if eval !rHaze || !(IsReference rHaze)
         return
     endif
@@ -71,7 +71,7 @@ begin function {}
             ; I think this can be potentially changed to be dynamic, since it feels super close....
             rHaze.MoveTo rPlayer 0 0 10
         else
-            ; Keep the object for reuse; hide it while conditions fail.
+            ; Keep the object for reuse; hide it while conditions fail
             call (CompileScript "HeatHazeESPless/HeatHazeDisableUDF.gek")
         endif
     endif
