@@ -16,9 +16,6 @@ begin function {}
         return
     endif
 
-    ; Read debug mode once per frame, then reuse it below
-    let bDebug := rHaze.AuxVarGetFlt "*_HeatHazeESPless.Debug"
-
     ; Gated behing if the player is inside, or if the player is submerged in water at 87.5% or more (from original mod)
     if eval rPlayer.IsInInterior == 1 || rPlayer.GetWaterImmersionPerc >= 0.875
         ; Call the disable compile
@@ -62,7 +59,8 @@ begin function {}
             rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 0 fRefractionStrength
             rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 1 fRefractionStrength
 
-            ; IF we're debugging, show the wireframe outline
+            ; IF we're debugging, show the wireframe outline (only read here, since this is the only place it's used)
+            let bDebug := rHaze.AuxVarGetFlt "*_HeatHazeESPless.Debug"
             if eval bDebug
                 rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 0
             endif

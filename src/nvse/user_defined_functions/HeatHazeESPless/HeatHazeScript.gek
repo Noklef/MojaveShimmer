@@ -59,22 +59,61 @@ begin function {}
         return
     endif
 
-    ; Read & work with the [Settings] HazeSpread value from the ini file
-    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze-ESPless.ini"
+    ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
+    let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
+    if eval !rWeathers || (GetType rWeathers) != 85 ; 85 is checking if it's a FormList
 
-    ; Do some checks to clamp down the haze spread if it's too wild
-    if eval fHazeSpread <= 0
-        let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
-    elseif eval fHazeSpread < 0.5
-        let fHazeSpread := 0.5 ; Clamp to the MCM minimum, rather than resetting to the default (0.5 itself is a valid MCM choice)
-    elseif eval fHazeSpread > 2.5
-        let fHazeSpread := 2.5 ; Clamps the max scale to 10, any more than that doesn't render it properly for some reason
-    endif
+        let rWeathers := CreateFormList
+        if eval !rWeathers
+            Print "[HeatHazeESPless] Can't creat the weather list, stopping script."
+            return
+        endif
 
-    ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
-    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini"
-    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini") == ""
-        let fHazeIntensityMultiplier := 1.00
+        ; Codes from FNVEdit's Editor IDs from the original mod's form list 
+        ; Mod only created FNV versions; not FO3 / TTW specific ones
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "FFC88")  ; NVWastelandClear
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "10B599") ; NVCemeteryIntro
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1237D7") ; NVWastelandGS
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "161241") ; NVTheStripWeather
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "171285") ; NVWastelandBorders
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173564") ; NVUrbanClear
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176574") ; NVWastelandClearNight
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176575") ; NVWastelandClearEast
+
+        ; Extras from the vanilla FNV .esm references
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173689") ; NVHooverDamWeather
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1735E9") ; NVlegateCampWeather
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
+        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "11E6E2") ; NVWastelandClearWindy
+
+        ; In case anyone doesn't have these mods... idk why anyone wouldn't have these at this point though...
+        ; These were tags as 'Pleasant', so not really tested
+        if eval IsModLoaded "HonestHearts.esm"
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "009908") ; NVDLC02Weather
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00EEB0") ; NVDLC02ZionValleyWeather
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E718") ; NVDLC02EasternVirginWeather
+            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E719") ; NVDLC02ThreeMarysWeather
+        endif
+        if eval IsModLoaded "OldWorldBlues.esm"
+            ListAddForm rWeathers (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
+        endif
+        if eval IsModLoaded "LonesomeRoad.esm"
+            ListAddForm rWeathers (GetFormFromMod "LonesomeRoad.esm" "009C2B") ; NVDLC04HRWeatherClear
+        endif
+
+        ; TTW's Pitt DLC overrides these existing FalloutNV.esm weather forms.
+        if eval IsModLoaded "ThePitt.esm"
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC2") ; DLC01PittWthrBasic01
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC6") ; DLC01PittWthrBridge01
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC7") ; DLC01PittWthrSteelYard02
+            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC5") ; DLC01PittWthrUptown01
+        endif
+        if eval IsModLoaded "BrokenSteel.esm"
+            ListAddForm rWeathers (GetFormFromMod "BrokenSteel.esm" "008A0D") ; DLC03AAFBWeather
+        endif
+
+        ; Finally storing the list for later usage
+        rPlayer.AuxVarSetRef "*_HeatHazeESPless.Weathers" rWeathers
     endif
 
     ; Get the cached base for reference firstly
@@ -152,8 +191,26 @@ begin function {}
         rPlayer.AuxVarSetRef "*_HeatHazeESPless.Ref" rHaze
     endif
 
-    ; Hide during setup; the update function enables it again once the weather/time conditions pass.
+    ; Hide during setup. The update function enables it on weather / time conditions
     rHaze.Disable
+
+    ; Read & work with the [Settings] HazeSpread value from the ini file
+    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze-ESPless.ini"
+
+    ; Do some checks to clamp down the haze spread if it's too wild
+    if eval fHazeSpread <= 0
+        let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
+    elseif eval fHazeSpread < 0.5
+        let fHazeSpread := 0.5 ; Clamp to the MCM minimum, rather than resetting to the default (0.5 itself is a valid MCM choice)
+    elseif eval fHazeSpread > 2.5
+        let fHazeSpread := 2.5 ; Clamps the max scale to 10, any more than that doesn't render it properly for some reason
+    endif
+
+    ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
+    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini"
+    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini") == ""
+        let fHazeIntensityMultiplier := 1.00
+    endif
 
     ; Setting the scale to 4x the haze spread value (which is 4x the mesh's size)
     let fScale := fHazeSpread * 4
@@ -176,63 +233,6 @@ begin function {}
 
     ; Hide it here so the debug off via MCM doesn't leave it showing
     rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 1
-
-    ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
-    let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
-    if eval !rWeathers || (GetType rWeathers) != 85 ; 85 is checking if it's a FormList
-
-        let rWeathers := CreateFormList
-        if eval !rWeathers
-            Print "[HeatHazeESPless] Can't creat the weather list, stopping script."
-            return
-        endif
-
-        ; Codes from FNVEdit's Editor IDs from the original mod's form list 
-        ; Mod only created FNV versions; not FO3 / TTW specific ones
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "FFC88")  ; NVWastelandClear
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "10B599") ; NVCemeteryIntro
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1237D7") ; NVWastelandGS
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "161241") ; NVTheStripWeather
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "171285") ; NVWastelandBorders
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173564") ; NVUrbanClear
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176574") ; NVWastelandClearNight
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176575") ; NVWastelandClearEast
-
-        ; Extras from the vanilla FNV .esm references
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173689") ; NVHooverDamWeather
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1735E9") ; NVlegateCampWeather
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "11E6E2") ; NVWastelandClearWindy
-
-        ; In case anyone doesn't have these mods... idk why anyone wouldn't have these at this point though...
-        ; These were tags as 'Pleasant', so not really tested
-        if eval IsModLoaded "HonestHearts.esm"
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "009908") ; NVDLC02Weather
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00EEB0") ; NVDLC02ZionValleyWeather
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E718") ; NVDLC02EasternVirginWeather
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E719") ; NVDLC02ThreeMarysWeather
-        endif
-        if eval IsModLoaded "OldWorldBlues.esm"
-            ListAddForm rWeathers (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
-        endif
-        if eval IsModLoaded "LonesomeRoad.esm"
-            ListAddForm rWeathers (GetFormFromMod "LonesomeRoad.esm" "009C2B") ; NVDLC04HRWeatherClear
-        endif
-
-        ; TTW's Pitt DLC overrides these existing FalloutNV.esm weather forms.
-        if eval IsModLoaded "ThePitt.esm"
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC2") ; DLC01PittWthrBasic01
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC6") ; DLC01PittWthrBridge01
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC7") ; DLC01PittWthrSteelYard02
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC5") ; DLC01PittWthrUptown01
-        endif
-        if eval IsModLoaded "BrokenSteel.esm"
-            ListAddForm rWeathers (GetFormFromMod "BrokenSteel.esm" "008A0D") ; DLC03AAFBWeather
-        endif
-
-        ; Finally storing the list for later usage
-        rPlayer.AuxVarSetRef "*_HeatHazeESPless.Weathers" rWeathers
-    endif
 
     ; Register it (we only get here when enabled, see the bEnabled check at the top)
     ; Call it every frame, and 1 + 8 (run during gameplay + remove on load or main menu)
