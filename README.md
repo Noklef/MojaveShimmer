@@ -35,7 +35,7 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 7. Expand out the code with more options
 
 ## AI Disclosure:
-I'm not going to deny the usage of AI for working on this; although I wouldn't consider the project to be "one-shot" / "Vibe Coded" by a long stretch. I'd say collaborative rather than me acting as a manager (i'd like to think at least). AI isn't perfect, so it's been used more as a colaborative tool rather than a minion to do my bidding. I haven't committed anything that I blindly implemented or not understood.
+I'm not going to deny the usage of AI for working on this; although I wouldn't consider the project to be *"one-shot"* / *"Vibe Coded"* by a long stretch. I'd say collaborative rather than me acting as a manager (i'd like to think at least). AI isn't perfect, so it's been used more as a colaborative tool rather than a minion to do my bidding. I haven't committed anything that I blindly implemented or not understood.
 
 I've been testing this on every commit; making sure it's still working as expected.
 
