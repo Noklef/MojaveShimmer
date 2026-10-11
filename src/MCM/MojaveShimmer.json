@@ -1,21 +1,21 @@
 {
-    "modName": "HeatHazeESPless",
-    "displayName": "Heat Haze - ESPless",
-    "saveFile": "HeatHaze-ESPless.ini",
+    "modName": "MojaveShimmer",
+    "displayName": "Mojave Shimmer",
+    "saveFile": "MojaveShimmer.ini",
     "minMCMVersion": 1.0,
     "requirements": [
-        { "type": "file", "file": "nvse/plugins/scripts/ln_HeatHazeESPless.txt" }
+        { "type": "file", "file": "nvse/plugins/scripts/ln_MojaveShimmer.txt" }
     ],
     "submenus": {
         "0": {
             "listTitle": "Settings",
-            "pageTitle": "Heat Haze Settings",
+            "pageTitle": "Mojave Shimmer Settings",
             "active": 1,
             "columns": 1,
             "enable": 1,
             "options": {
                 "1": {
-                    "title": "Enable Heat Haze",
+                    "title": "Enable Mojave Shimmer",
                     "enable": 1,
                     "type": 5,
                     "mouse": "Enable or disable the heat haze.",

@@ -1,9 +1,9 @@
 begin function {}
     ; Dev notes for me:
-    ;   This uses a player reference to get / set info. I.E. '*_HeatHazeESPless'
+    ;   This uses a player reference to get / set info. I.E. '*_MojaveShimmer'
     ;       - *: prefix is used as a "temp storage"
     ;       - _: prefix is used as a "public storage", which is shared.
-    ;       - HeatHazeEspless: used as the "namespace" for this mod
+    ;       - MojaveShimmer: used as the "namespace" for this mod
     ;   GECK wiki stuff:
     ;       - https://geckwiki.com/index.php?title=AuxiliaryVariableSetFloat
     ;       - https://geckwiki.com/index.php/SetGameMainLoopCallback
@@ -30,9 +30,9 @@ begin function {}
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
 
     ; Compile & check the update function
-    let rUpdate := CompileScript "HeatHazeESPless/HeatHazeUpdateUDF.gek"
+    let rUpdate := CompileScript "MojaveShimmer/MojaveShimmerUpdateUDF.gek"
     if eval !rUpdate
-        Print "[HeatHazeESPless] Can't compile 'HeatHazeUpdateUDF' for some reason, stopping script."
+        Print "[MojaveShimmer] Can't compile 'MojaveShimmerUpdateUDF' for some reason, stopping script."
         return
     endif
 
@@ -40,9 +40,9 @@ begin function {}
     rPlayer.SetGameMainLoopCallback rUpdate 0
 
     ; Compile & check the cleanup function 
-    let rCleanup := CompileScript "HeatHazeESPless/HeatHazeCleanupUDF.gek"
+    let rCleanup := CompileScript "MojaveShimmer/MojaveShimmerCleanupUDF.gek"
     if eval !rCleanup
-        Print "[HeatHazeESPless] Can't compile 'HeatHazeCleanupUDF' for some reason, stopping script."
+        Print "[MojaveShimmer] Can't compile 'MojaveShimmerCleanupUDF' for some reason, stopping script."
         return
     endif
 
@@ -50,22 +50,22 @@ begin function {}
     SetEventHandler "PreLoadGame" rCleanup
 
     ; Hook the MCMExtUpdate event, which re-applies the settings
-    SetEventHandler "MCMExtUpdate" (CompileScript "HeatHazeESPless/HeatHazeMCMUpdateUDF.gek")
+    SetEventHandler "MCMExtUpdate" (CompileScript "MojaveShimmer/MojaveShimmerMCMUpdateUDF.gek")
 
     ; Checking if we need to disable the mod, and if so run the disable script
-    let bEnabled := (GetINIString "General:bEnabled" "HeatHaze-ESPless.ini") != "0"
+    let bEnabled := (GetINIString "General:bEnabled" "MojaveShimmer.ini") != "0"
     if eval !bEnabled
-        call (CompileScript "HeatHazeESPless/HeatHazeDisableUDF.gek")
+        call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
         return
     endif
 
     ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
-    let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
+    let rWeathers := rPlayer.AuxVarGetRef "*_MojaveShimmer.Weathers"
     if eval !rWeathers || (GetType rWeathers) != 85 ; 85 is checking if it's a FormList
 
         let rWeathers := CreateFormList
         if eval !rWeathers
-            Print "[HeatHazeESPless] Can't creat the weather list, stopping script."
+            Print "[MojaveShimmer] Can't creat the weather list, stopping script."
             return
         endif
 
@@ -113,11 +113,11 @@ begin function {}
         endif
 
         ; Finally storing the list for later usage
-        rPlayer.AuxVarSetRef "*_HeatHazeESPless.Weathers" rWeathers
+        rPlayer.AuxVarSetRef "*_MojaveShimmer.Weathers" rWeathers
     endif
 
     ; Get the cached base for reference firstly
-    let rHazeBase := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Base"
+    let rHazeBase := rPlayer.AuxVarGetRef "*_MojaveShimmer.Base"
 
     ; If we don't have it set-up already / not valid / not cloned, then we create it
     if eval !rHazeBase || (GetType rHazeBase) != 21 || !(IsClonedForm rHazeBase)
@@ -128,32 +128,32 @@ begin function {}
         
         ; If for some reason it has a script already, or isn't an activator
         if eval (GetType rTemplate) != 21 || (GetScript rTemplate) 
-            Print "[HeatHazeESPless] The template (15182D) either has a script or isn't an activator, stopping script."
+            Print "[MojaveShimmer] The template (15182D) either has a script or isn't an activator, stopping script."
             return
         endif
 
         ; Cloning the template we've grabbed from NelsonsLightBeamAct (for the heat haze effect)
         let rHazeBase := TempCloneForm rTemplate
         if eval !rHazeBase
-            Print "[HeatHazeESPless] Couldn't clone the template we need, stopping script. "
+            Print "[MojaveShimmer] Couldn't clone the template we need, stopping script. "
             return
         endif
         
         ; Check if we have the model file
-        if eval !(SetModelPath "heathaze\heathaze_cylinder.nif" rHazeBase)
-            Print "[HeatHazeESPless] Can't find the heat haze model file, stopping script."
+        if eval !(SetModelPath "mojaveshimmer\mojaveshimmer_cylinder.nif" rHazeBase)
+            Print "[MojaveShimmer] Can't find the heat haze model file, stopping script."
             return
         endif
 
         ; Give the object a name, so clicking it with the console open doesn't just show the HEX value
-        SetName "Heat Haze" rHazeBase
+        SetName "Mojave Shimmer" rHazeBase
 
         ; Storing the haze base in the reference so we can re-use it later on
-        rPlayer.AuxVarSetRef "*_HeatHazeESPless.Base" rHazeBase
+        rPlayer.AuxVarSetRef "*_MojaveShimmer.Base" rHazeBase
     endif
 
     ; Fetching the cache'd object we setup before, and check if we got anything from it
-    let rHaze := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Ref"
+    let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
     if eval rHaze
         ; Check if the reference is valid (if not we need to create it again, setting it to 0)
         if eval !(IsReference rHaze)
@@ -169,12 +169,12 @@ begin function {}
         ; Place 1 copy on the player
         let rHaze := rPlayer.PlaceAtMe rHazeBase 1
         if eval !rHaze
-            Print "[HeatHazeESPless] Can't create the heat haze reference near the player, stopping script."
+            Print "[MojaveShimmer] Can't create the heat haze reference near the player, stopping script."
             return
         endif
 
         ; Set the object to be owned, for the cleanup function to check it doesn't delete something we didn't create
-        rHaze.AuxVarSetFlt "*_HeatHazeESPless.Owner" 1
+        rHaze.AuxVarSetFlt "*_MojaveShimmer.Owner" 1
         ; Keep it persistent across cell changes
         rHaze.SetPersistent 1
 
@@ -188,14 +188,14 @@ begin function {}
         rHaze.SetRefFlag 536870912 0
 
         ; Store the reference for later use
-        rPlayer.AuxVarSetRef "*_HeatHazeESPless.Ref" rHaze
+        rPlayer.AuxVarSetRef "*_MojaveShimmer.Ref" rHaze
     endif
 
     ; Hide during setup. The update function enables it on weather / time conditions
     rHaze.Disable
 
     ; Read & work with the [Settings] HazeSpread value from the ini file
-    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "HeatHaze-ESPless.ini"
+    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "MojaveShimmer.ini"
 
     ; Do some checks to clamp down the haze spread if it's too wild
     if eval fHazeSpread <= 0
@@ -207,15 +207,15 @@ begin function {}
     endif
 
     ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
-    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini"
-    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "HeatHaze-ESPless.ini") == ""
+    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini"
+    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
         let fHazeIntensityMultiplier := 1.00
     endif
 
     ; Setting the scale to 4x the haze spread value (which is 4x the mesh's size)
     let fScale := fHazeSpread * 4
     ; Store it so the update function can re-apply it if it doesn't stick while disabled / in menus
-    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Scale" fScale
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.Scale" fScale
     rHaze.SetScale fScale
 
     ; Calculating the refreraction strength
@@ -225,14 +225,14 @@ begin function {}
     if eval fRefractionStrength > 1
         let fRefractionStrength := 1
     endif
-    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Strength" fRefractionStrength
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.Strength" fRefractionStrength
 
     ; Fetching and setting the debug INI option
-    let bDebug := (GetINIString "Debug:bDebug" "HeatHaze-ESPless.ini") == "1"
-    rHaze.AuxVarSetFlt "*_HeatHazeESPless.Debug" bDebug
+    let bDebug := (GetINIString "Debug:bDebug" "MojaveShimmer.ini") == "1"
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.Debug" bDebug
 
     ; Hide it here so the debug off via MCM doesn't leave it showing
-    rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 1
+    rHaze.SetNifBlockFlag "MojaveShimmerDebugWireframe" 0 1
 
     ; Register it (we only get here when enabled, see the bEnabled check at the top)
     ; Call it every frame, and 1 + 8 (run during gameplay + remove on load or main menu)

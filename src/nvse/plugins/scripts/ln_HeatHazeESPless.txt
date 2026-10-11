@@ -1,9 +1,0 @@
-; Compile and run the script
-ref rInit
-let rInit := CompileScript "HeatHazeESPless/HeatHazeScript.gek"
-if eval rInit
-    call rInit
-else
-    Print "[HeatHazeESPless] Something broke trying to enable, check nvse.log"
-endif
-

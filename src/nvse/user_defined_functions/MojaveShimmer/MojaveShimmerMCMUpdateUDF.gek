@@ -1,0 +1,11 @@
+array_var aUpdatedMods
+begin function {aUpdatedMods}
+    ; DEV NOTE: apparently MCM Extender fires this from OnPauseMenuClose, after SaveCachedIni has written the .ini to disk
+
+    ; MCM Extender passes through all the updated mods, so we need to check for 'MojaveShimmer' in the list
+    if eval (Ar_Find "MojaveShimmer" aUpdatedMods) != Ar_BadNumericIndex
+        call (CompileScript "MojaveShimmer/MojaveShimmerScript.gek")
+    endif
+
+    aUpdatedMods = ar_Null
+end

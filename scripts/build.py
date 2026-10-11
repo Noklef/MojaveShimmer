@@ -132,8 +132,8 @@ def package_mesh(data, debug=False):
         elif debug and types[type_id] == "BSShaderTextureSet":
             texture_count, length = struct.unpack_from("<II", block)
             diffuse = bytes(block[8:8 + length])
-            if texture_count and diffuse.lower().replace(b"/", b"\\") == b"textures\\heathaze\\haze_d.dds":
-                replacement = b"textures\\heathaze\\haze_d_debug.dds"
+            if texture_count and diffuse.lower().replace(b"/", b"\\") == b"textures\\mojaveshimmer\\shimmer_d.dds":
+                replacement = b"textures\\mojaveshimmer\\shimmer_d_debug.dds"
                 block[4:8 + length] = struct.pack("<I", len(replacement)) + replacement
                 textures_changed += 1
         struct.pack_into("<I", output_header, sizes_pos + index * 4, len(block))
@@ -149,23 +149,23 @@ def debug_mesh(data):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Build the Heat Haze ESP-less package.")
+    parser = argparse.ArgumentParser(description="Build the Mojave Shimmer package.")
     parser.add_argument("--debug", action="store_true",
                         help="Use the debug diffuse texture and disable refraction in the packaged NIF")
     args = parser.parse_args()
     root = Path(__file__).resolve().parent.parent
     source = root / "src"
-    mesh_path = Path("Meshes/heathaze/heathaze_cylinder.nif")
+    mesh_path = Path("Meshes/mojaveshimmer/mojaveshimmer_cylinder.nif")
     mesh = source / mesh_path
     if not mesh.is_file():
         raise FileNotFoundError(f"Missing mesh: {mesh}")
-    debug_texture = Path("Textures/heathaze/haze_d_debug.dds")
+    debug_texture = Path("Textures/mojaveshimmer/shimmer_d_debug.dds")
     mesh_data = package_mesh(mesh.read_bytes())
     if args.debug:
         if not (source / debug_texture).is_file():
             raise FileNotFoundError(f"Missing debug texture: {source / debug_texture}")
         mesh_data = debug_mesh(mesh_data)
-    name = "HeatHaze_ESPless_debug.zip" if args.debug else "HeatHaze_ESPless.zip"
+    name = "MojaveShimmer_debug.zip" if args.debug else "MojaveShimmer.zip"
     output = root / "dist" / name
     output.parent.mkdir(exist_ok=True)
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:

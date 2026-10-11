@@ -7,11 +7,11 @@ begin function {}
     ; Player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14"
     ; Created haze object reference
-    let rHaze := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Ref"
+    let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
     ; Created weather list
-    let rWeathers := rPlayer.AuxVarGetRef "*_HeatHazeESPless.Weathers"
+    let rWeathers := rPlayer.AuxVarGetRef "*_MojaveShimmer.Weathers"
 
-    ; If there's no valid haze ref (e.g. HeatHazeCleanupUDF erased the .Ref aux var), there's nothing to update
+    ; If there's no valid haze ref (e.g. MojaveShimmerCleanupUDF erased the .Ref aux var), there's nothing to update
     if eval !rHaze || !(IsReference rHaze)
         return
     endif
@@ -19,12 +19,12 @@ begin function {}
     ; Gated behing if the player is inside, or if the player is submerged in water at 87.5% or more (from original mod)
     if eval rPlayer.IsInInterior == 1 || rPlayer.GetWaterImmersionPerc >= 0.875
         ; Call the disable compile
-        call (CompileScript "HeatHazeESPless/HeatHazeDisableUDF.gek")
+        call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
     else
         ; Basically porting the mod logic for haze intensity (checking if the weather is in the weather reference list we created)
         ; Will probably re-write to be a bit better or something
-        float fOutgoingHeatHaze = ((IsRefInList rWeathers (GetOutgoingWeather)) != -1) * (1 - GetCurrentWeatherPercent)
-        float fIncomingHeatHaze = ((IsRefInList rWeathers (GetCurrentWeather)) != -1) * GetCurrentWeatherPercent
+        float fOutgoingShimmer = ((IsRefInList rWeathers (GetOutgoingWeather)) != -1) * (1 - GetCurrentWeatherPercent)
+        float fIncomingShimmer = ((IsRefInList rWeathers (GetCurrentWeather)) != -1) * GetCurrentWeatherPercent
         float fCurrentTime = GetCurrentTime
 
         ; Logic for this is: Strongest at noon, forwards and backwards from that de-amplifies it
@@ -36,33 +36,33 @@ begin function {}
         endif
 
         ; Original mod logic to calculate the intentisy of the effect
-        float fHeatHazeIntensity = (fOutgoingHeatHaze + fIncomingHeatHaze) * fCurrentTime
-        fHeatHazeIntensity += 0.001
+        float fShimmerIntensity = (fOutgoingShimmer + fIncomingShimmer) * fCurrentTime
+        fShimmerIntensity += 0.001
 
         ; Oriignal mod logic makes it only enable above 0.5
         ; Need to go through this and figure out if we wanna parameterize it
-        if fHeatHazeIntensity > 0.5
+        if fShimmerIntensity > 0.5
             ; If it's disabled, enable it (feels hacky?)
             if rHaze.GetDisabled
                 rHaze.Enable
             endif
 
             ; Hacky fix, re-apply the spread shale if it hasn't stuck (only call `setScale` when it's different)
-            float fScale = rHaze.AuxVarGetFlt "*_HeatHazeESPless.Scale"
+            float fScale = rHaze.AuxVarGetFlt "*_MojaveShimmer.Scale"
             if eval fScale > 0 && (rHaze.GetScale) != fScale
                 rHaze.SetScale fScale
             endif
 
             ; Setting up the hidden helper's texture controller to control refraction strength
             ; This is a bit of a hack tbh
-            float fRefractionStrength = rHaze.AuxVarGetFlt "*_HeatHazeESPless.Strength"
-            rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 0 fRefractionStrength
-            rHaze.SetTextureTransformKey "HeatHazeStrengthControl" 0 1 fRefractionStrength
+            float fRefractionStrength = rHaze.AuxVarGetFlt "*_MojaveShimmer.Strength"
+            rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 0 fRefractionStrength
+            rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 1 fRefractionStrength
 
             ; IF we're debugging, show the wireframe outline (only read here, since this is the only place it's used)
-            let bDebug := rHaze.AuxVarGetFlt "*_HeatHazeESPless.Debug"
+            let bDebug := rHaze.AuxVarGetFlt "*_MojaveShimmer.Debug"
             if eval bDebug
-                rHaze.SetNifBlockFlag "HeatHazeDebugWireframe" 0 0
+                rHaze.SetNifBlockFlag "MojaveShimmerDebugWireframe" 0 0
             endif
 
             ; This follows the player, but not the camera (?), so woudl third person break?
@@ -70,7 +70,7 @@ begin function {}
             rHaze.MoveTo rPlayer 0 0 10
         else
             ; Keep the object for reuse; hide it while conditions fail
-            call (CompileScript "HeatHazeESPless/HeatHazeDisableUDF.gek")
+            call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
         endif
     endif
 end

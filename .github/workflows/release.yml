@@ -39,10 +39,10 @@ jobs:
           fi
 
           python scripts/build.py
-          package="dist/HeatHaze_ESPless-${version}.zip"
-          mv dist/HeatHaze_ESPless.zip "$package"
+          package="dist/MojaveShimmer-${version}.zip"
+          mv dist/MojaveShimmer.zip "$package"
 
           gh release create "v${version}" "$package" \
             --target "$GITHUB_SHA" \
-            --title "Heat Haze ESPless ${version}" \
+            --title "Mojave Shimmer ${version}" \
             --generate-notes

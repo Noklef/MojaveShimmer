@@ -1,0 +1,9 @@
+; Compile and run the script
+ref rInit
+let rInit := CompileScript "MojaveShimmer/MojaveShimmerScript.gek"
+if eval rInit
+    call rInit
+else
+    Print "[MojaveShimmer] Something broke trying to enable, check nvse.log"
+endif
+

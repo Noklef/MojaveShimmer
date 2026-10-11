@@ -1,0 +1,9 @@
+; Runs when going to the main menu
+ref rCleanup
+let rCleanup := CompileScript "MojaveShimmer/MojaveShimmerCleanupUDF.gek"
+if eval rCleanup
+    call rCleanup ""
+else
+    Print "[MojaveShimmer] Something broke trying to disable, check nvse.log"
+endif
+    
