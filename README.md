@@ -15,10 +15,10 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 - Configurable options for:
   - Haze `Intensity` / `Distance`
   - Haze `Start / End times` / `Transition time`
-  - `Always` being enabled
-  - `Debug` mode with a wireframe showing the distance the effect shows at.
+  - Toggle to `Always being enabled`
+  - `Debug mode` with a wireframe showing the distance the effect shows at.
 - [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642) support.
-- TTW Compatible
+- TTW Compatible.
 
 ## TL;DR on how it works:
 - Draws a tall cylinder around the player
@@ -35,7 +35,7 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 4. ~~Make it a bit more configurable~~ ***Done***
 5. ~~Allow it to be controllable / togglable through MCM~~ ***Done***
 6. ~~Add a debug mode~~ ***Done***
-7. Expand out the code with more options
+7. ~~Expand out the code with more options~~ ***Pretty Much Done***
 
 ## AI Disclosure:
 I'm not going to deny the usage of AI for working on this; although I wouldn't consider the project to be *"one-shot"* / *"Vibe Coded"* by a long stretch. I'd say collaborative rather than me acting as a manager (i'd like to think at least). AI isn't perfect, so it's been used more as a colaborative tool rather than a minion to do my bidding. I haven't committed anything that I blindly implemented or not understood.
@@ -52,6 +52,8 @@ Model used: `Claude Opus 5.5` (Formerly `GPT-6.1 Sol`)
 
 ## Resources / Credits
 - doodlum for the original [Heat Haze](https://www.nexusmods.com/newvegas/mods/76286) mod & inspiration
+- [FNVEdit](https://www.nexusmods.com/newvegas/mods/34703)
+- [NIFSkope](https://www.nifskope.com/)
 - [GECK Wiki](https://geckwiki.com/) for coming in clutch with knowledge
 - [Blender](https://www.blender.org/)
 - [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to convert the model to use in New Vegas
