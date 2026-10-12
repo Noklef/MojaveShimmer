@@ -1,11 +1,8 @@
 begin function {}
-    ref rPlayer ; Player reference
     ref rHaze   ; The actual haze object
     
-    ; Player reference
-    let rPlayer := GetFormFromMod "FalloutNV.esm" "14"
     ; Created haze object reference
-    let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
+    let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"
 
     ; Don't disable if the haze doesn't exist, or isn't a reference
     if eval !rHaze || !(IsReference rHaze)

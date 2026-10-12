@@ -3,19 +3,15 @@ begin function {sSavePath}
     ; https://geckwiki.com/index.php?title=MarkForDelete
     ; https://geckwiki.com/index.php?title=AuxiliaryVariableErase
 
-    ref rPlayer     ; Player reference
     ref rHazeBase   ; Our custom activator we clone with the heat mesh assigned to it
     ref rHaze       ; The actual haze object
 
-    ; 14 is the player reference
-    let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
-
     ; Get the 2 references we need to clean up the haze effect
-    let rHazeBase := rPlayer.AuxVarGetRef "*_MojaveShimmer.Base"
-    let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
+    let rHazeBase := player.AuxVarGetRef "*_MojaveShimmer.Base"
+    let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"
 
     ; Discard the reference for cleanup
-    rPlayer.AuxVarErase "*_MojaveShimmer.Ref"
+    player.AuxVarErase "*_MojaveShimmer.Ref"
 
     ; There's like 7 things to check, so i put it into 3 else ifs
     if eval !rHaze || !(IsReference rHaze) ; If haze doesn't exist, or isn't a reference

@@ -11,8 +11,6 @@ begin function {}
     ;       - https://geckwiki.com/index.php?title=PlaceAtMe
     ;       - https://geckwiki.com/index.php?title=SetReferenceFlag
 
-    ref rPlayer                 ; Player reference
-
     ref rUpdate                 ; Update logic script reference (compiled)
     ref rCleanup                ; Cleanup logic script reference (compiled)
 
@@ -26,7 +24,7 @@ begin function {}
 
     int bEnabled                    ; INI - Enable / Disable the mod
     int bFallout3                   ; INI - Enable / Disable F03 (TTW)
-    int bDebug                      ; INI - Enable / Disable the debug wireframe
+    int bWireframe                  ; INI - Enable / Disable the debug wireframe
     int bAllWeathers                ; INI - Ignore the weather (Pleasant flag + block list)
     int bAllTimes                   ; INI - Ignore the time of day
     float fHazeSpread               ; INI - used for scaling
@@ -40,9 +38,6 @@ begin function {}
     ; Script Compilation Checking / Reference Saving
     ; ==============================================
 
-    ; 14 is the player reference
-    let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 
-
     ; Compile & check the update function
     let rUpdate := CompileScript "MojaveShimmer/MojaveShimmerUpdateUDF.gek"
     if eval !rUpdate
@@ -51,7 +46,7 @@ begin function {}
     endif
 
     ; Stop the update loop while we (re)do setup
-    rPlayer.SetGameMainLoopCallback rUpdate 0
+    player.SetGameMainLoopCallback rUpdate 0
 
     ; Compile & check the cleanup function 
     let rCleanup := CompileScript "MojaveShimmer/MojaveShimmerCleanupUDF.gek"
@@ -125,7 +120,7 @@ begin function {}
         let fFadeHours := (fEndHour - fStartHour) / 2
     endif
 
-    let bDebug := (GetINIString "Debug:bDebug" "MojaveShimmer.ini") == "1"
+    let bWireframe := (GetINIString "Debug:bWireframe" "MojaveShimmer.ini") == "1"
     let bAllWeathers := (GetINIString "Debug:bAllWeathers" "MojaveShimmer.ini") == "1"
     let bAllTimes := (GetINIString "Debug:bAllTimes" "MojaveShimmer.ini") == "1"
     let bFallout3 := (GetINIString "General:bFallout3" "MojaveShimmer.ini") == "1"
@@ -135,7 +130,7 @@ begin function {}
     ; ==================
 
     ; Set-up a block list of weathers we're don't want the effect to trigger on
-    let rBlockList := rPlayer.AuxVarGetRef "*_MojaveShimmer.BlockList"
+    let rBlockList := player.AuxVarGetRef "*_MojaveShimmer.BlockList"
     if eval !rBlockList || (GetType rBlockList) != 85 ; 85 is the FormList type
 
         let rBlockList := CreateFormList
@@ -145,7 +140,7 @@ begin function {}
         endif
 
         ; Storing the list for the update function
-        rPlayer.AuxVarSetRef "*_MojaveShimmer.BlockList" rBlockList
+        player.AuxVarSetRef "*_MojaveShimmer.BlockList" rBlockList
     endif
 
     ; MCM Re-runs the whole script, so we now have to empty it and re-add all the things once it does (Since now FO3 can be toggled on / off)
@@ -209,7 +204,7 @@ begin function {}
     ; ==============================
 
     ; Get the cached base for reference firstly
-    let rHazeBase := rPlayer.AuxVarGetRef "*_MojaveShimmer.Base"
+    let rHazeBase := player.AuxVarGetRef "*_MojaveShimmer.Base"
 
     ; If we don't have it set-up already / not valid / not cloned, then we create it
     if eval !rHazeBase || (GetType rHazeBase) != 21 || !(IsClonedForm rHazeBase)
@@ -241,11 +236,11 @@ begin function {}
         SetName "Mojave Shimmer" rHazeBase
 
         ; Storing the haze base in the reference so we can re-use it later on
-        rPlayer.AuxVarSetRef "*_MojaveShimmer.Base" rHazeBase
+        player.AuxVarSetRef "*_MojaveShimmer.Base" rHazeBase
     endif
 
     ; Fetching the cache'd object we setup before, and check if we got anything from it
-    let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
+    let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"
     if eval rHaze
         ; Check if the reference is valid (if not we need to create it again, setting it to 0)
         if eval !(IsReference rHaze)
@@ -259,7 +254,7 @@ begin function {}
     ; If It hasn't been created yet, we need to create it and set it for use
     if eval !rHaze
         ; Place 1 copy on the player
-        let rHaze := rPlayer.PlaceAtMe rHazeBase 1
+        let rHaze := player.PlaceAtMe rHazeBase 1
         if eval !rHaze
             Print "[MojaveShimmer] Can't create the heat haze reference near the player, stopping script."
             return
@@ -280,7 +275,7 @@ begin function {}
         rHaze.SetRefFlag 536870912 0
 
         ; Store the reference for later use
-        rPlayer.AuxVarSetRef "*_MojaveShimmer.Ref" rHaze
+        player.AuxVarSetRef "*_MojaveShimmer.Ref" rHaze
     endif
 
     ; Hide during setup. The update function enables it on weather / time conditions
@@ -313,7 +308,7 @@ begin function {}
     rHaze.AuxVarSetFlt "*_MojaveShimmer.FadeHours" fFadeHours
 
     ; Store the debug option for the update function
-    rHaze.AuxVarSetFlt "*_MojaveShimmer.Debug" bDebug
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.Wireframe" bWireframe
     rHaze.AuxVarSetFlt "*_MojaveShimmer.AllWeathers" bAllWeathers
     rHaze.AuxVarSetFlt "*_MojaveShimmer.AllTimes" bAllTimes
 
@@ -322,5 +317,5 @@ begin function {}
 
     ; Register it (we only get here when enabled, see the bEnabled check at the top)
     ; Call it every frame, and 1 + 8 (run during gameplay + remove on load or main menu)
-    rPlayer.SetGameMainLoopCallback rUpdate 1 1 9
+    player.SetGameMainLoopCallback rUpdate 1 1 9
 end

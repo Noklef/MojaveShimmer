@@ -143,12 +143,12 @@
             "enable": 1,
             "options": {
                 "1": {
-                    "title": "Debug Mode",
+                    "title": "Show Wireframe",
                     "enable": 1,
                     "type": 5,
                     "mouse": "Shows a green outline for the haze effect. This is the distance the haze will appear.",
                     "vars": [
-                        { "configINI": "Debug:bDebug", "default": 0 }
+                        { "configINI": "Debug:bWireframe", "default": 0 }
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },

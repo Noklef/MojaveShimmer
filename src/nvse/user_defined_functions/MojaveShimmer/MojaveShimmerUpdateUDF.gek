@@ -4,7 +4,6 @@ begin function {}
     ;   - https://geckwiki.com/index.php?title=GetOutgoingWeather
     ;   - https://geckwiki.com/index.php?title=GetCurrentWeather
 
-    ref rPlayer         ; Player reference
     ref rHaze           ; The actual haze object
 
     ref rWeatherIn      ; Current weather (or the one we're transitioning to)
@@ -12,12 +11,8 @@ begin function {}
     int bAllWeathers    ; INI toggle to ignore the weather completely, cached on the haze object by setup
     ref rBlockList      ; Weathers that never get the haze, built by setup
 
-    int bDebug          ; Debug mode flag, cached on the haze object by setup
-
-    ; Player reference
-    let rPlayer := GetFormFromMod "FalloutNV.esm" "14"
     ; Created haze object reference
-    let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
+    let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"
 
     ; If there's no valid haze ref (e.g. MojaveShimmerCleanupUDF erased the .Ref aux var), there's nothing to update
     if eval !rHaze || !(IsReference rHaze)
@@ -36,7 +31,7 @@ begin function {}
 
         ; fetch the data we need for checking
         let bAllWeathers := rHaze.AuxVarGetFlt "*_MojaveShimmer.AllWeathers"
-        let rBlockList := rPlayer.AuxVarGetRef "*_MojaveShimmer.BlockList"
+        let rBlockList := player.AuxVarGetRef "*_MojaveShimmer.BlockList"
 
         ; Logic around figuring out the shimmer of the incoming weather change (I.E. weather we're transitioning to)
         float fIncomingShimmer = 0
@@ -108,13 +103,12 @@ begin function {}
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 1 fRefractionStrength
 
             ; IF we're debugging, show the wireframe outline (only read here, since this is the only place it's used)
-            let bDebug := rHaze.AuxVarGetFlt "*_MojaveShimmer.Debug"
-            if eval bDebug
+            if eval (rHaze.AuxVarGetFlt "*_MojaveShimmer.Wireframe")
                 rHaze.SetNifBlockFlag "MojaveShimmerDebugWireframe" 0 0
             endif
 
             ; This follows the player, but not the camera (?), so would third person break?
-            rHaze.MoveTo rPlayer 0 0 10
+            rHaze.MoveTo player 0 0 10
             ; Copy also rotates with player, so we need to reset it  (test this)
             rHaze.SetAngleEx 0 0 0
         else
