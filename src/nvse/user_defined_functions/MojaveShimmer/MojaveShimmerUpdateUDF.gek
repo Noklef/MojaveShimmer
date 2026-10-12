@@ -21,9 +21,11 @@ begin function {}
 
     ; If we're inside, or under water; then disable the effect
     ; Both checks, and the 0.875 (87.5% submerged), come from the original Heat Haze mod
-    if eval rPlayer.IsInInterior || rPlayer.GetWaterImmersionPerc >= 0.875
-        ; Call the disable compile
-        call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
+    if eval player.IsInInterior || player.GetWaterImmersionPerc >= 0.875
+        ; Hide it if it isn't already
+        if eval !rHaze.GetDisabled
+            rHaze.Disable
+        endif
     else
         let rWeatherIn := GetCurrentWeather ; Getting the current weather
         let rWeatherOut := GetOutgoingWeather ; NVSE-specific weather function that the weather is tranferring from
@@ -113,7 +115,9 @@ begin function {}
             rHaze.SetAngleEx 0 0 0
         else
             ; Keep the object for reuse; hide it while conditions fail
-            call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
+            if eval !rHaze.GetDisabled
+                rHaze.Disable
+            endif
         endif
     endif
 end
