@@ -15,8 +15,8 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 - Configurable options for:
   - Haze `Intensity` / `Distance`
   - Haze `Start / End times` / `Transition time`
-  - Toggle to `Always being enabled`
-  - `Debug mode` with a wireframe showing the distance the effect shows at.
+  - Haze in the `Capital Wasteland` too (Tale of Two Wastelands), or Mojave only
+  - `Debug mode` with a wireframe showing the distance the effect shows at, plus `All Weathers` / `All Times` testing toggles.
 - [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642) support.
 - TTW Compatible.
 

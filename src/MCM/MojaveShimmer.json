@@ -9,12 +9,17 @@
     "submenus": {
         "0": {
             "listTitle": "Settings",
-            "pageTitle": "Mojave Shimmer Settings",
+            "pageTitle": "Mojave Shimmer - Settings",
             "active": 1,
             "columns": 2,
             "enable": 1,
             "options": {
                 "1": {
+                    "title": "General",
+                    "enable": 1,
+                    "type": 0
+                },
+                "3": {
                     "title": "Enable Mojave Shimmer",
                     "enable": 1,
                     "type": 5,
@@ -23,17 +28,27 @@
                         { "configINI": "General:bEnabled", "default": 1 }
                     ]
                 },
-                "5": {
+                "4": {
+                    "title": "Fallout 3 Areas (TTW)",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": " Enable the haze effect in areas in FO3 & the DLC's (might not look the best though, be warned)",
+                    "vars": [
+                        { "configINI": "General:bFallout3", "default": 0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "7": {
                     "title": "Haze",
                     "enable": 1,
                     "type": 0
                 },
-                "6": {
+                "8": {
                     "title": "Timing",
                     "enable": 1,
                     "type": 0
                 },
-                "7": {
+                "9": {
                     "title": "Spread Distance",
                     "enable": 1,
                     "type": 2.5,
@@ -49,7 +64,7 @@
                         "valueMax": 2.5
                     }
                 },
-                "8": {
+                "10": {
                     "title": "Haze Starts",
                     "enable": 1,
                     "type": 2,
@@ -67,7 +82,7 @@
                     "suffix": ":00",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
-                "9": {
+                "11": {
                     "title": "Intensity Multiplier",
                     "enable": 1,
                     "type": 2.5,
@@ -83,7 +98,7 @@
                         "valueMax": 2.5
                     }
                 },
-                "10": {
+                "12": {
                     "title": "Haze Ends",
                     "enable": 1,
                     "type": 2,
@@ -101,7 +116,7 @@
                     "suffix": ":00",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
-                "12": {
+                "14": {
                     "title": "Fade Length",
                     "enable": 1,
                     "type": 2.5,
@@ -118,13 +133,16 @@
                     },
                     "suffix": "h",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
-                },
-                "13": {
-                    "title": "Debug",
-                    "enable": 1,
-                    "type": 0
-                },
-                "15": {
+                }
+            }
+        },
+        "1": {
+            "listTitle": "Debug",
+            "pageTitle": "Mojave Shimmer - Debug",
+            "columns": 1,
+            "enable": 1,
+            "options": {
+                "1": {
                     "title": "Debug Mode",
                     "enable": 1,
                     "type": 5,
@@ -134,7 +152,7 @@
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
-                "17": {
+                "2": {
                     "title": "All Weathers",
                     "enable": 1,
                     "type": 5,
@@ -144,7 +162,7 @@
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
-                "19": {
+                "3": {
                     "title": "All Times",
                     "enable": 1,
                     "type": 5,

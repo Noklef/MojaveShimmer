@@ -25,6 +25,7 @@ begin function {}
     float fRefractionStrength   ; Refraction strength supplied to the NIF controller
 
     int bEnabled                    ; INI - Enable / Disable the mod
+    int bFallout3                   ; INI - Enable / Disable F03 (TTW)
     int bDebug                      ; INI - Enable / Disable the debug wireframe
     int bAllWeathers                ; INI - Ignore the weather (Pleasant flag + block list)
     int bAllTimes                   ; INI - Ignore the time of day
@@ -127,6 +128,7 @@ begin function {}
     let bDebug := (GetINIString "Debug:bDebug" "MojaveShimmer.ini") == "1"
     let bAllWeathers := (GetINIString "Debug:bAllWeathers" "MojaveShimmer.ini") == "1"
     let bAllTimes := (GetINIString "Debug:bAllTimes" "MojaveShimmer.ini") == "1"
+    let bFallout3 := (GetINIString "General:bFallout3" "MojaveShimmer.ini") == "1"
 
     ; ==================
     ; Weather Block List
@@ -142,28 +144,64 @@ begin function {}
             return
         endif
 
-        ; Codes from FNVEdit's Editor IDs, adding to the FormList
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "1538FA") ; NVWastelandClearTest
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "1689F2") ; NVWastelandClearTest2
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "169BD4") ; NVWastelandInterior
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E5CF") ; NVSewerWeather
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E5D0") ; NVSewerSkyPlaneWeather
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "164BA4") ; NVJacobstownWeather
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "16198A") ; NVBlackMountainWeather
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "173FF3") ; NVHooverBattleWeather
-        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E") ; DefaultWeather - just in case
-
-        ; DLC weathers, only added when that DLC is loaded
-        if eval IsModLoaded "OldWorldBlues.esm"
-            ListAddForm rBlockList (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
-        endif
-        if eval IsModLoaded "LonesomeRoad.esm"
-            ListAddForm rBlockList (GetFormFromMod "LonesomeRoad.esm" "002CE5") ; NVDLC04DivideWeather
-        endif
-
         ; Storing the list for the update function
         rPlayer.AuxVarSetRef "*_MojaveShimmer.BlockList" rBlockList
+    endif
+
+    ; MCM Re-runs the whole script, so we now have to empty it and re-add all the things once it does (Since now FO3 can be toggled on / off)
+    ListClear rBlockList
+
+    ; Codes from FNVEdit's Editor IDs, adding to the FormList
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "1538FA") ; NVWastelandClearTest
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "1689F2") ; NVWastelandClearTest2
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "169BD4") ; NVWastelandInterior
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E5CF") ; NVSewerWeather
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E5D0") ; NVSewerSkyPlaneWeather
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "164BA4") ; NVJacobstownWeather
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "16198A") ; NVBlackMountainWeather
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "173FF3") ; NVHooverBattleWeather
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E") ; DefaultWeather - just in case
+
+    ; DLC weathers, only added when that DLC is loaded
+    if eval IsModLoaded "OldWorldBlues.esm"
+        ListAddForm rBlockList (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
+    endif
+    if eval IsModLoaded "LonesomeRoad.esm"
+        ListAddForm rBlockList (GetFormFromMod "LonesomeRoad.esm" "002CE5") ; NVDLC04DivideWeather
+    endif
+
+    ; FNV apparently has FO3 leftover weathers (not all though), and TTW uses those, so have to specify them here
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "017906") ; SuburbanCloudy
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "054E1D") ; WastelandEastOasis
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "092BC6") ; DLC01PittWthrBridge01
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "092BC2") ; DLC01PittWthrBasic01
+    ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "092BC5") ; DLC01PittWthrUptown01
+
+    ; DLC weathers' we're blocking these since they don't really fit the haze
+    if eval IsModLoaded "Anchorage.esm"
+        ListAddForm rBlockList (GetFormFromMod "Anchorage.esm" "0022E4") ; DLC02AnchWthrClear01 - snow
+        ListAddForm rBlockList (GetFormFromMod "Anchorage.esm" "00CCCF") ; DLC02AnchWthrOverlook
+        ListAddForm rBlockList (GetFormFromMod "Anchorage.esm" "00C3F0") ; DLC02AnchWthrPreDawn02
+    endif
+    if eval IsModLoaded "PointLookout.esm"
+        ListAddForm rBlockList (GetFormFromMod "PointLookout.esm" "003123") ; DLC04PointLookoutBoardwalkWthr - swamp / coast
+        ListAddForm rBlockList (GetFormFromMod "PointLookout.esm" "0113F0") ; DLC04PointLookoutLighthouseWthr
+        ListAddForm rBlockList (GetFormFromMod "PointLookout.esm" "004234") ; DLC04PointLookoutMarshWthr
+    endif
+
+    ; If FO3 is toggled off, block these as well
+    if eval !bFallout3
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "064609") ; WastelandClear
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "05A728") ; WastelandDecay
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "03D43B") ; WastelandEast
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "054E12") ; WastelandClearMegaton
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "06A076") ; MegatonFalloutDecay
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "092BC7") ; DLC01PittWthrSteelYard02
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "02BF97") ; TranquilityClear
+        if eval IsModLoaded "BrokenSteel.esm"
+            ListAddForm rBlockList (GetFormFromMod "BrokenSteel.esm" "008A0D") ; DLC03AAFBWeather - Adams AFB
+        endif
     endif
 
     ; ==============================
