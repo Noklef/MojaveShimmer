@@ -12,18 +12,22 @@ begin function {}
     ;       - https://geckwiki.com/index.php?title=SetReferenceFlag
 
     ref rPlayer                 ; Player reference
+
     ref rUpdate                 ; Update logic script reference (compiled)
     ref rCleanup                ; Cleanup logic script reference (compiled)
+
+    ref rBlockList              ; Weathers that never get the haze, even when they're flagged Pleasant
+
     ref rTemplate               ; The base we clone for the heat haze effect (NelsonsLightBeamAct)
     ref rHazeBase               ; Our custom activator we clone with the heat mesh assigned to it
     ref rHaze                   ; The actual haze object
-    ref rWeathers               ; List of weathers that the haze effect is enabled for
-    float fRefractionStrength   ; Refraction strength supplied to the NIF controller
     float fScale                ; Scale that's calculated from the haze spread
+    float fRefractionStrength   ; Refraction strength supplied to the NIF controller
 
     int bEnabled                    ; INI - Enable / Disable the mod
     int bDebug                      ; INI - Enable / Disable the debug wireframe
-    int bAlwaysEnabled              ; INI - Ignore the time of day
+    int bAllWeathers                ; INI - Ignore the weather (Pleasant flag + block list)
+    int bAllTimes                   ; INI - Ignore the time of day
     float fHazeSpread               ; INI - used for scaling
     float fHazeIntensityMultiplier  ; INI - Haze strength
     float fStartHour                ; INI - The hour the haze starts fading in
@@ -89,8 +93,6 @@ begin function {}
         let fHazeIntensityMultiplier := 1.00
     endif
 
-    let bAlwaysEnabled := (GetINIString "Timing:bAlwaysEnabled" "MojaveShimmer.ini") == "1"
-
     ; Get the start hour from the INI, and set it to a default if invalid
     let fStartHour := GetINIFloat "Timing:StartHour" "MojaveShimmer.ini"
     if eval (GetINIString "Timing:StartHour" "MojaveShimmer.ini") == ""
@@ -123,66 +125,45 @@ begin function {}
     endif
 
     let bDebug := (GetINIString "Debug:bDebug" "MojaveShimmer.ini") == "1"
+    let bAllWeathers := (GetINIString "Debug:bAllWeathers" "MojaveShimmer.ini") == "1"
+    let bAllTimes := (GetINIString "Debug:bAllTimes" "MojaveShimmer.ini") == "1"
 
-    ; ==============
-    ; Weathers Setup
-    ; ==============
+    ; ==================
+    ; Weather Block List
+    ; ==================
 
-    ; We need to build a list of weathers to check this against, the original used the form list (HeatHazeWeathers)
-    let rWeathers := rPlayer.AuxVarGetRef "*_MojaveShimmer.Weathers"
-    if eval !rWeathers || (GetType rWeathers) != 85 ; 85 is checking if it's a FormList
+    ; Set-up a block list of weathers we're don't want the effect to trigger on
+    let rBlockList := rPlayer.AuxVarGetRef "*_MojaveShimmer.BlockList"
+    if eval !rBlockList || (GetType rBlockList) != 85 ; 85 is the FormList type
 
-        let rWeathers := CreateFormList
-        if eval !rWeathers
-            Print "[MojaveShimmer] Can't creat the weather list, stopping script."
+        let rBlockList := CreateFormList
+        if eval !rBlockList
+            Print "[MojaveShimmer] Can't create the weather block list, stopping script."
             return
         endif
 
-        ; Codes from FNVEdit's Editor IDs
-        ; Mod only created FNV versions; not FO3 / TTW specific ones
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "FFC88")  ; NVWastelandClear
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "10B599") ; NVCemeteryIntro
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1237D7") ; NVWastelandGS
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "161241") ; NVTheStripWeather
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "171285") ; NVWastelandBorders
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173564") ; NVUrbanClear
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176574") ; NVWastelandClearNight
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "176575") ; NVWastelandClearEast
+        ; Codes from FNVEdit's Editor IDs, adding to the FormList
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "1538FA") ; NVWastelandClearTest
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "1689F2") ; NVWastelandClearTest2
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "169BD4") ; NVWastelandInterior
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E5CF") ; NVSewerWeather
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E5D0") ; NVSewerSkyPlaneWeather
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "164BA4") ; NVJacobstownWeather
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "16198A") ; NVBlackMountainWeather
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "173FF3") ; NVHooverBattleWeather
+        ListAddForm rBlockList (GetFormFromMod "FalloutNV.esm" "15E") ; DefaultWeather - just in case
 
-        ; Extras from the vanilla FNV .esm references
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "173689") ; NVHooverDamWeather
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "1735E9") ; NVlegateCampWeather
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "17407F") ; NVHooverFinalBattle
-        ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "11E6E2") ; NVWastelandClearWindy
-
-        ; In case anyone doesn't have these mods... idk why anyone wouldn't have these at this point though...
-        ; These were tags as 'Pleasant', so not really tested 100%
-        if eval IsModLoaded "HonestHearts.esm"
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "009908") ; NVDLC02Weather
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00EEB0") ; NVDLC02ZionValleyWeather
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E718") ; NVDLC02EasternVirginWeather
-            ListAddForm rWeathers (GetFormFromMod "HonestHearts.esm" "00E719") ; NVDLC02ThreeMarysWeather
-        endif
+        ; DLC weathers, only added when that DLC is loaded
         if eval IsModLoaded "OldWorldBlues.esm"
-            ListAddForm rWeathers (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
+            ListAddForm rBlockList (GetFormFromMod "OldWorldBlues.esm" "00E57F") ; NVDLC03BigMTWeather
         endif
         if eval IsModLoaded "LonesomeRoad.esm"
-            ListAddForm rWeathers (GetFormFromMod "LonesomeRoad.esm" "009C2B") ; NVDLC04HRWeatherClear
+            ListAddForm rBlockList (GetFormFromMod "LonesomeRoad.esm" "002CE5") ; NVDLC04DivideWeather
         endif
 
-        ; TTW's Pitt DLC overrides these existing FalloutNV.esm weather forms.
-        if eval IsModLoaded "ThePitt.esm"
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC2") ; DLC01PittWthrBasic01
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC6") ; DLC01PittWthrBridge01
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC7") ; DLC01PittWthrSteelYard02
-            ListAddForm rWeathers (GetFormFromMod "FalloutNV.esm" "092BC5") ; DLC01PittWthrUptown01
-        endif
-        if eval IsModLoaded "BrokenSteel.esm"
-            ListAddForm rWeathers (GetFormFromMod "BrokenSteel.esm" "008A0D") ; DLC03AAFBWeather
-        endif
-
-        ; Finally storing the list for later usage
-        rPlayer.AuxVarSetRef "*_MojaveShimmer.Weathers" rWeathers
+        ; Storing the list for the update function
+        rPlayer.AuxVarSetRef "*_MojaveShimmer.BlockList" rBlockList
     endif
 
     ; ==============================
@@ -289,13 +270,14 @@ begin function {}
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Strength" fRefractionStrength
 
     ; Store the timing settings for the update function
-    rHaze.AuxVarSetFlt "*_MojaveShimmer.AlwaysEnabled" bAlwaysEnabled
     rHaze.AuxVarSetFlt "*_MojaveShimmer.StartHour" fStartHour
     rHaze.AuxVarSetFlt "*_MojaveShimmer.EndHour" fEndHour
     rHaze.AuxVarSetFlt "*_MojaveShimmer.FadeHours" fFadeHours
 
     ; Store the debug option for the update function
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Debug" bDebug
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.AllWeathers" bAllWeathers
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.AllTimes" bAllTimes
 
     ; Hide it here so the debug off via MCM doesn't leave it showing
     rHaze.SetNifBlockFlag "MojaveShimmerDebugWireframe" 0 1

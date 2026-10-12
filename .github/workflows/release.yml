@@ -44,5 +44,5 @@ jobs:
 
           gh release create "v${version}" "$package" \
             --target "$GITHUB_SHA" \
-            --title "Mojave Shimmer ${version}" \
+            --title "Mojave Shimmer - ${version}" \
             --generate-notes

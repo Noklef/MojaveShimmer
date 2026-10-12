@@ -1,6 +1,6 @@
 begin function {}
     ref rPlayer ; Player reference
-    ref rHaze ; The actual haze object
+    ref rHaze   ; The actual haze object
     
     ; Player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14"

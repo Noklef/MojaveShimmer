@@ -1,7 +1,3 @@
-tools
-.tools
-docs
-research
-SOURCE_ESP
 dist
 scripts/__pycache__
+dev

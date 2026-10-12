@@ -50,13 +50,21 @@
                     }
                 },
                 "8": {
-                    "title": "Always Enabled",
+                    "title": "Haze Starts",
                     "enable": 1,
-                    "type": 5,
-                    "mouse": "Ignore the time of day: the heat haze shows at full strength whenever the weather allows.",
+                    "type": 2,
+                    "mouse": "Hour when the heat haze starts fading in.",
                     "vars": [
-                        { "configINI": "Timing:bAlwaysEnabled", "default": 0 }
+                        { "configINI": "Timing:StartHour", "default": 6 }
                     ],
+                    "scale": {
+                        "valueDecimal": 0,
+                        "valueIncrement": 1,
+                        "valueMin": 0,
+                        "valueMax": 23,
+                        "suffix": ":00"
+                    },
+                    "suffix": ":00",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
                 "9": {
@@ -76,28 +84,10 @@
                     }
                 },
                 "10": {
-                    "title": "Haze Starts",
-                    "enable": 1,
-                    "type": 2,
-                    "mouse": "Hour when the heat haze starts fading in. Ignored while Always Enabled is ticked.",
-                    "vars": [
-                        { "configINI": "Timing:StartHour", "default": 6 }
-                    ],
-                    "scale": {
-                        "valueDecimal": 0,
-                        "valueIncrement": 1,
-                        "valueMin": 0,
-                        "valueMax": 23,
-                        "suffix": ":00"
-                    },
-                    "suffix": ":00",
-                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
-                },
-                "12": {
                     "title": "Haze Ends",
                     "enable": 1,
                     "type": 2,
-                    "mouse": "Hour when the heat haze has fully faded out. Must be later than Haze Starts. Ignored while Always Enabled is ticked.",
+                    "mouse": "Hour when the heat haze has fully faded out. Must be later than Haze Starts.",
                     "vars": [
                         { "configINI": "Timing:EndHour", "default": 19 }
                     ],
@@ -111,16 +101,11 @@
                     "suffix": ":00",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
-                "13": {
-                    "title": "Debug",
-                    "enable": 1,
-                    "type": 0
-                },
-                "14": {
+                "12": {
                     "title": "Fade Length",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "How long the effect takes to fade in at the start, and out at the end. Ignored while Always Enabled is ticked.",
+                    "mouse": "How long the effect takes to fade in at the start, and out at the end.",
                     "vars": [
                         { "configINI": "Timing:FadeHours", "default": 2.0 }
                     ],
@@ -134,6 +119,11 @@
                     "suffix": "h",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
+                "13": {
+                    "title": "Debug",
+                    "enable": 1,
+                    "type": 0
+                },
                 "15": {
                     "title": "Debug Mode",
                     "enable": 1,
@@ -141,6 +131,26 @@
                     "mouse": "Shows a green outline for the haze effect. This is the distance the haze will appear.",
                     "vars": [
                         { "configINI": "Debug:bDebug", "default": 0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "17": {
+                    "title": "All Weathers",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": "Shows the heat haze in every weather, ignoring the weather checks.",
+                    "vars": [
+                        { "configINI": "Debug:bAllWeathers", "default": 0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "19": {
+                    "title": "All Times",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": "Shows the heat haze at every time of day, ignoring the Timing settings.",
+                    "vars": [
+                        { "configINI": "Debug:bAllTimes", "default": 0 }
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 }

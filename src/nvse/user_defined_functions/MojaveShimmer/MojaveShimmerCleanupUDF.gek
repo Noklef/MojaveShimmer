@@ -1,12 +1,11 @@
-; PreLoadGame passes a path. Manual calls and xm_ pass an empty string.
 string_var sSavePath ; We need to keep {sSavePath} since PreLoadGame calls it with that argument
 begin function {sSavePath}
     ; https://geckwiki.com/index.php?title=MarkForDelete
     ; https://geckwiki.com/index.php?title=AuxiliaryVariableErase
 
-    ref rPlayer ; Player reference
-    ref rHazeBase ; Our custom activator we clone with the heat mesh assigned to it
-    ref rHaze ; The actual haze object
+    ref rPlayer     ; Player reference
+    ref rHazeBase   ; Our custom activator we clone with the heat mesh assigned to it
+    ref rHaze       ; The actual haze object
 
     ; 14 is the player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14" 

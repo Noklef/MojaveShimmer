@@ -1,34 +1,71 @@
 begin function {}
-    ref rPlayer ; Player reference
-    ref rHaze ; The actual haze object
-    ref rWeathers ; List of weathers that the haze effect is enabled for
-    int bDebug ; Debug mode flag, cached on the haze object by setup
+    ;   GECK wiki stuff:
+    ;   - https://geckwiki.com/index.php?title=GetCurrentWeatherPercent
+    ;   - https://geckwiki.com/index.php?title=GetOutgoingWeather
+    ;   - https://geckwiki.com/index.php?title=GetCurrentWeather
+
+    ref rPlayer         ; Player reference
+    ref rHaze           ; The actual haze object
+
+    ref rWeatherIn      ; Current weather (or the one we're transitioning to)
+    ref rWeatherOut     ; Weather we're transitioning from
+    int bAllWeathers    ; INI toggle to ignore the weather completely, cached on the haze object by setup
+    ref rBlockList      ; Weathers that never get the haze, built by setup
+
+    int bDebug          ; Debug mode flag, cached on the haze object by setup
 
     ; Player reference
     let rPlayer := GetFormFromMod "FalloutNV.esm" "14"
     ; Created haze object reference
     let rHaze := rPlayer.AuxVarGetRef "*_MojaveShimmer.Ref"
-    ; Created weather list
-    let rWeathers := rPlayer.AuxVarGetRef "*_MojaveShimmer.Weathers"
 
     ; If there's no valid haze ref (e.g. MojaveShimmerCleanupUDF erased the .Ref aux var), there's nothing to update
     if eval !rHaze || !(IsReference rHaze)
         return
     endif
 
-    ; Gated behing if the player is inside, or if the player is submerged in water at 87.5% or more
-    if eval rPlayer.IsInInterior == 1 || rPlayer.GetWaterImmersionPerc >= 0.875
+    ; If we're inside, or under water; then disable the effect
+    ; Both checks, and the 0.875 (87.5% submerged), come from the original Heat Haze mod
+    if eval rPlayer.IsInInterior || rPlayer.GetWaterImmersionPerc >= 0.875
         ; Call the disable compile
         call (CompileScript "MojaveShimmer/MojaveShimmerDisableUDF.gek")
     else
-        ; Basically porting the mod logic for haze intensity (checking if the weather is in the weather reference list we created)
-        ; Will probably re-write to be a bit better or something
-        float fOutgoingShimmer = ((IsRefInList rWeathers (GetOutgoingWeather)) != -1) * (1 - GetCurrentWeatherPercent)
-        float fIncomingShimmer = ((IsRefInList rWeathers (GetCurrentWeather)) != -1) * GetCurrentWeatherPercent
+        let rWeatherIn := GetCurrentWeather ; Getting the current weather
+        let rWeatherOut := GetOutgoingWeather ; NVSE-specific weather function that the weather is tranferring from
+        float fWeatherPct = GetCurrentWeatherPercent ; Getting % of transition
 
-        ; se the time factor here in case of always enabled
+        ; fetch the data we need for checking
+        let bAllWeathers := rHaze.AuxVarGetFlt "*_MojaveShimmer.AllWeathers"
+        let rBlockList := rPlayer.AuxVarGetRef "*_MojaveShimmer.BlockList"
+
+        ; Logic around figuring out the shimmer of the incoming weather change (I.E. weather we're transitioning to)
+        float fIncomingShimmer = 0
+        if eval rWeatherIn ; safety check to ensure we're pulling the current weather
+            ; If we allow for all weather
+            if eval bAllWeathers
+                fIncomingShimmer = fWeatherPct
+            ; A second check for if it's in the block list (-1 means not in list)
+            elseif eval (IsRefInList rBlockList rWeatherIn) == -1
+                fIncomingShimmer = (GetBit (GetWeatherTraitNumeric rWeatherIn 13) 0) * fWeatherPct
+            endif
+        endif
+
+        ; Same logic as above, except for the outgoing weather (I.E. transitioning from)
+        float fOutgoingShimmer = 0
+        ; safety check for weather out reference + checking the outgoing weather transition isn't at 100% (changing still)
+        if eval rWeatherOut && fWeatherPct < 1
+            ; If we allow for all weather
+            if eval bAllWeathers
+                fOutgoingShimmer = 1 - fWeatherPct
+            ; A second check for if it's in the block list (-1 means not in list)
+            elseif eval (IsRefInList rBlockList rWeatherOut) == -1
+                fOutgoingShimmer = (GetBit (GetWeatherTraitNumeric rWeatherOut 13) 0) * (1 - fWeatherPct)
+            endif
+        endif
+
+        ; se the time factor here in case of all times
         float fTimeFactor = 1
-        if eval !(rHaze.AuxVarGetFlt "*_MojaveShimmer.AlwaysEnabled")
+        if eval !(rHaze.AuxVarGetFlt "*_MojaveShimmer.AllTimes")
             ; Get the values we need
             float fStartHour = rHaze.AuxVarGetFlt "*_MojaveShimmer.StartHour" 
             float fEndHour = rHaze.AuxVarGetFlt "*_MojaveShimmer.EndHour"
@@ -76,7 +113,7 @@ begin function {}
                 rHaze.SetNifBlockFlag "MojaveShimmerDebugWireframe" 0 0
             endif
 
-            ; This follows the player, but not the camera (?), so woudl third person break?
+            ; This follows the player, but not the camera (?), so would third person break?
             rHaze.MoveTo rPlayer 0 0 10
             ; Copy also rotates with player, so we need to reset it  (test this)
             rHaze.SetAngleEx 0 0 0
