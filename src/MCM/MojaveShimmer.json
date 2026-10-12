@@ -7,7 +7,7 @@
         { "type": "file", "file": "nvse/plugins/scripts/ln_MojaveShimmer.txt" }
     ],
     "submenus": {
-        "0": {
+        "1": {
             "listTitle": "Settings",
             "pageTitle": "Mojave Shimmer - Settings",
             "active": 1,
@@ -136,7 +136,7 @@
                 }
             }
         },
-        "1": {
+        "2": {
             "listTitle": "Debug",
             "pageTitle": "Mojave Shimmer - Debug",
             "columns": 1,
