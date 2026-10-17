@@ -4,7 +4,7 @@
 
 This mod aims to add a [Heat Haze](https://en.wikipedia.org/wiki/Mirage#Heat_haze)-like effect into New Vegas. Honestly it's a bare-bones implementation, but an implementation nonetheless (the effect isn't scientifically correct in the slightest)
 
-This took HEAVY inspiration from [doodlum's Heat Haze](https://www.nexusmods.com/newvegas/mods/76286) mod, and has been expanded with new meshes, textures, configuration options, and logic to match more realistic depictions of the effect.
+This took HEAVY inspiration from [doodlum's Heat Haze](https://www.nexusmods.com/newvegas/mods/76286) mod, and has been expanded with a new meshe, texture, configuration options, and logic to match more realistic depictions of the effect.
 
 ## Why?
 
@@ -14,8 +14,11 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 ## Features
 - **ESP-less** implementation of a distance Heat Shimmer effect.
 - Custom (albeit simple) mesh for displaying the haze effect (literally just a cylinder with custom textures).
-- Configurable **intensity**, **distance** and **start / end times** (with a fade in / out) through [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642), or an "Always Enabled" option to ignore the time of day.
-- **Debug** option to configure the distance / intensity to your liking in a toxic green colour.
+- Configurable through [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642) (optional) or the INI:
+  - **Distance** (50-100m distances)
+  - **Start / end times** and the **fade length** in / out
+  - **Fallout 3 areas** (Experimental, not fully tested)
+- **Debug** options: Wireframe to show the distance, an **Intensity Multiplier**, and **All Weathers** / **All Times** to ignore the weather or time of day.
 - ***TTW Compatible*** for the most part
 
 ## TL;DR on how it works:
@@ -30,17 +33,19 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 - (Optional) [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642)
 
 ## Installation
-- TBA
+- Download the mod file on [NexusMods]()
+- Install using Vortex / MO2
+- (Optional) download the .ini file as well so updating doesn't override it (don't merge the 2 mods when installing).
 
-## Compatibility
+## Compatibility Notes
 > ***100% NOT COMPATIBLE WITH [Heat Haze](https://www.nexusmods.com/newvegas/mods/76286), this mod is doing similar to what that one does.***
 
-I'm not 100% sure what works, and what doesn't with this mod...
-Guessing ENB don't work it, but it *should* work with NVR (don't quote me on that).
+I have tested this specifically with the following mods, and it seems ok:
+- NVR
+- Desert Natural Weathers TTW
+I'm not 100% sure what will break this mod though... Maybe ENB?
 
-I haven't tested this out 100% with a lot of weather mods, but this heat haze effect shouldn't be an issue with any of them i don't think.
-
-*Should* work with any weather options that have been tagged as **pleasant** (i.e. weather mods, but I haven't tested many yet...)
+*Should* work with any weather options that have been tagged as **pleasant** / don't have a wind value higher than 0.5
 
 ## AI Disclosure:
 I'm not going to deny the usage of AI for working on this; although I wouldn't consider the project to be *"one-shot"* / *"Vibe Coded"* by a long stretch. I'd say collaborative rather than me acting as a manager (i'd like to think at least). AI isn't perfect, so it's been used more as a colaborative tool rather than a minion to do my bidding. I haven't committed anything that I blindly implemented or not understood.
@@ -49,7 +54,7 @@ I've been testing this on every commit; making sure it's still working as expect
 
 Ai was used in the following ways:
 - Helping me find resources to port the logic over / researching how NVSE plugins are implemented in this fashion.
-- Correcting my mistakes in implementation (i.e. reference fixes, reviewing, looking for anything specifically GECK/NVSE related that I didn't necessarily realise) + Debugging nuances.
+- Correcting my mistakes in implementation (i.e. reference fixes, reviewing, looking for anything specifically GECK/NVSE related that I didn't necessarily realise) + debugging nuances & figuring out engine quirks
 - Helping me update / modify the [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to work with recent versions of Blender.
 - Generating the GitHub release scripts / `build.py` script.
 
@@ -61,5 +66,5 @@ Model used: `Claude Opus 5.5` (Formerly `GPT-6.1 Sol`)
 - [NIFSkope](https://www.nifskope.com/)
 - [GECK Wiki](https://geckwiki.com/) for coming in clutch with knowledge
 - [Blender](https://www.blender.org/)
-- [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to convert the model to use in New Vegas
-- [Paint.NET](https://www.paint.net/)
+- [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to convert the model to use in New Vegas (modified to work with Blender 5.2)
+- [GIMP](https://www.gimp.org/downloads/)
