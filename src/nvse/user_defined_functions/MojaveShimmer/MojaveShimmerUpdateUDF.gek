@@ -3,6 +3,7 @@ begin function {}
     ;   - https://geckwiki.com/index.php?title=GetCurrentWeatherPercent
     ;   - https://geckwiki.com/index.php?title=GetOutgoingWeather
     ;   - https://geckwiki.com/index.php?title=GetCurrentWeather
+    ;   - https://geckwiki.com/index.php?title=GetWeatherTraitNumeric
 
     ref rHaze           ; The actual haze object
 
@@ -38,12 +39,15 @@ begin function {}
         ; Logic around figuring out the shimmer of the incoming weather change (I.E. weather we're transitioning to)
         float fIncomingShimmer = 0
         if eval rWeatherIn ; safety check to ensure we're pulling the current weather
-            ; If we allow for all weather
+            ; First check, if we allow all weathers
             if eval bAllWeathers
                 fIncomingShimmer = fWeatherPct
             ; A second check for if it's in the block list (-1 means not in list)
             elseif eval (IsRefInList rBlockList rWeatherIn) == -1
-                fIncomingShimmer = (GetBit (GetWeatherTraitNumeric rWeatherIn 13) 0) * fWeatherPct
+                ; Third check, figured out we can check a weather's wind speed
+                if eval (GetWeatherTraitNumeric rWeatherIn 4) <= 0.5
+                    fIncomingShimmer = (GetBit (GetWeatherTraitNumeric rWeatherIn 13) 0) * fWeatherPct
+                endif
             endif
         endif
 
@@ -51,12 +55,15 @@ begin function {}
         float fOutgoingShimmer = 0
         ; safety check for weather out reference + checking the outgoing weather transition isn't at 100% (changing still)
         if eval rWeatherOut && fWeatherPct < 1
-            ; If we allow for all weather
+            ; First check, same as fIncomingShimmer's
             if eval bAllWeathers
                 fOutgoingShimmer = 1 - fWeatherPct
-            ; A second check for if it's in the block list (-1 means not in list)
+            ; A second check, same as fIncomingShimmer's
             elseif eval (IsRefInList rBlockList rWeatherOut) == -1
-                fOutgoingShimmer = (GetBit (GetWeatherTraitNumeric rWeatherOut 13) 0) * (1 - fWeatherPct)
+                ; Third check, same as fIncomingShimmer's
+                if eval (GetWeatherTraitNumeric rWeatherOut 4) <= 0.5
+                    fOutgoingShimmer = (GetBit (GetWeatherTraitNumeric rWeatherOut 13) 0) * (1 - fWeatherPct)
+                endif
             endif
         endif
 
