@@ -36,8 +36,9 @@ def main():
     with zipfile.ZipFile(OUTPUT, "w", zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(SOURCE.rglob("*")):
             relative = path.relative_to(SOURCE)
-            # Everything under src/ ships, except meshes other than the cylinder
-            if path.is_file() and (relative.parts[0] != "Meshes" or relative == MESH):
+            # Everything under src/ ships, except meshes other than the cylinder, and texture work files (only .dds ship)
+            if path.is_file() and (relative.parts[0] != "Meshes" or relative == MESH) \
+                    and (relative.parts[0] != "Textures" or path.suffix.lower() == ".dds"):
                 archive.write(path, relative.as_posix())
     print(f"Built {OUTPUT}")
 
