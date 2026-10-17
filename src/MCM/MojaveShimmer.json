@@ -32,7 +32,7 @@
                     "title": "Fallout 3 Areas (TTW)",
                     "enable": 1,
                     "type": 5,
-                    "mouse": " Enable the haze effect in areas in FO3 & the DLC's (might not look the best though, be warned)",
+                    "mouse": "(Hasn't been fully tested) Enable the haze effect in areas in FO3 & the DLC's. Results may vary.",
                     "vars": [
                         { "configINI": "General:bFallout3", "default": 0 }
                     ],
@@ -51,18 +51,20 @@
                 "9": {
                     "title": "Spread Distance",
                     "enable": 1,
-                    "type": 2.5,
-                    "mouse": "Set the distance that the heat haze effect starts at. The strength scales with it, so the effect looks the same at any distance.",
+                    "type": 2,
+                    "mouse": "How far from you the heat haze starts. The strength scales up with the distance to make up for it.",
                     "vars": [
-                        { "configINI": "Settings:HazeSpread", "default": 1.0 }
+                        { "configINI": "Settings:HazeDistance", "default": 50 }
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 },
                     "scale": {
-                        "valueDecimal": 2,
-                        "valueIncrement": 0.25,
-                        "valueMin": 0.5,
-                        "valueMax": 2.5
-                    }
+                        "valueDecimal": 0,
+                        "valueIncrement": 10,
+                        "valueMin": 50,
+                        "valueMax": 100,
+                        "suffix": "m"
+                    },
+                    "suffix": "m"
                 },
                 "10": {
                     "title": "Haze Starts",
@@ -75,8 +77,8 @@
                     "scale": {
                         "valueDecimal": 0,
                         "valueIncrement": 1,
-                        "valueMin": 0,
-                        "valueMax": 23,
+                        "valueMin": 5,
+                        "valueMax": 11,
                         "suffix": ":00"
                     },
                     "suffix": ":00",
@@ -86,15 +88,15 @@
                     "title": "Haze Ends",
                     "enable": 1,
                     "type": 2,
-                    "mouse": "Hour when the heat haze has fully faded out. Must be later than Haze Starts.",
+                    "mouse": "Hour when the heat haze has fully faded out.",
                     "vars": [
                         { "configINI": "Timing:EndHour", "default": 19 }
                     ],
                     "scale": {
                         "valueDecimal": 0,
                         "valueIncrement": 1,
-                        "valueMin": 0,
-                        "valueMax": 23,
+                        "valueMin": 12,
+                        "valueMax": 20,
                         "suffix": ":00"
                     },
                     "suffix": ":00",
@@ -168,7 +170,7 @@
                     "scale": {
                         "valueDecimal": 2,
                         "valueIncrement": 0.1,
-                        "valueMin": 0.1,
+                        "valueMin": 0.5,
                         "valueMax": 2.5
                     }
                 }

@@ -27,12 +27,12 @@ begin function {}
     int bWireframe                  ; INI - Enable / Disable the debug wireframe
     int bAllWeathers                ; INI - Ignore the weather (Pleasant flag + block list)
     int bAllTimes                   ; INI - Ignore the time of day
-    float fHazeSpread               ; INI - used for scaling
+    float fHazeDistance             ; INI - How far away the haze starts
     float fHazeIntensityMultiplier  ; INI - Haze strength
     float fStartHour                ; INI - The hour the haze starts fading in
     float fEndHour                  ; INI - The hour the haze has fully faded out
     float fFadeHours                ; INI - How many hours the fade in / out takes
-
+    float fHazeSpread               ; HazeDistance / 50 - used for scaling
 
     ; ==============================================
     ; Script Compilation Checking / Reference Saving
@@ -72,23 +72,26 @@ begin function {}
     ; INI Fetching / Checking
     ; =======================
 
-    let fHazeSpread := GetINIFloat "Settings:HazeSpread" "MojaveShimmer.ini"
+    let fHazeDistance := GetINIFloat "Settings:HazeDistance" "MojaveShimmer.ini"
 
-    ; Do some checks to clamp down the haze spread if it's too wild
-    if eval fHazeSpread <= 0
-        let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
-    elseif eval fHazeSpread < 0.5
-        let fHazeSpread := 0.5 ; Clamp to the MCM minimum
-    elseif eval fHazeSpread > 2.5
-        let fHazeSpread := 2.5 ; Clamp this to the MCM maximum (tested to work at 125m in game around abouts)
+    ; Do some checks to clamp down the haze distance if it's too wild
+    if eval fHazeDistance <= 0
+        let fHazeDistance := 50 ; Use the default if missing or not a positive distance
+    elseif eval fHazeDistance < 50
+        let fHazeDistance := 50 ; Clamp to the MCM minimum
+    elseif eval fHazeDistance > 100
+        let fHazeDistance := 100 ; Clamp this to the MCM maximum (past ~108m the game stops drawing the refraction, starting in the middle of the screen)
     endif
+
+    ; Originally were doing 1:1, but now with MCM we need to divide it by 50 (since the cylinder model defaults to 50m)
+    let fHazeSpread := fHazeDistance / 50
 
     ; Reading the multiplier, and defaulting to 1 if it's missing or not positive
     let fHazeIntensityMultiplier := GetINIFloat "Debug:HazeIntensityMultiplier" "MojaveShimmer.ini"
     if eval fHazeIntensityMultiplier <= 0 || (GetINIString "Debug:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
         let fHazeIntensityMultiplier := 1.00
-    elseif eval fHazeIntensityMultiplier < 0.1
-        let fHazeIntensityMultiplier := 0.1 ; Clamp to the MCM minimum
+    elseif eval fHazeIntensityMultiplier < 0.5
+        let fHazeIntensityMultiplier := 0.5 ; Clamp to the MCM minimum
     elseif eval fHazeIntensityMultiplier > 2.5
         let fHazeIntensityMultiplier := 2.5 ; Clamp to the MCM maximum
     endif
