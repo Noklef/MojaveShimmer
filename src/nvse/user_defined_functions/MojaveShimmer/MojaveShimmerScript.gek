@@ -78,15 +78,19 @@ begin function {}
     if eval fHazeSpread <= 0
         let fHazeSpread := 1.00 ; Use the default if missing or not a positive scale
     elseif eval fHazeSpread < 0.5
-        let fHazeSpread := 0.5 ; Clamp to the MCM minimum, rather than resetting to the default (0.5 itself is a valid MCM choice)
+        let fHazeSpread := 0.5 ; Clamp to the MCM minimum
     elseif eval fHazeSpread > 2.5
-        let fHazeSpread := 2.5 ; Clamps the max scale to 10, any more than that doesn't render it properly for some reason
+        let fHazeSpread := 2.5 ; Clamp this to the MCM maximum (tested to work at 125m in game around abouts)
     endif
 
-    ; Reading the multiplier, and defaulting to 1 if it's missing or less than 0.5
-    let fHazeIntensityMultiplier := GetINIFloat "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini"
-    if eval fHazeIntensityMultiplier < 0.5 || (GetINIString "Settings:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
+    ; Reading the multiplier, and defaulting to 1 if it's missing or not positive
+    let fHazeIntensityMultiplier := GetINIFloat "Debug:HazeIntensityMultiplier" "MojaveShimmer.ini"
+    if eval fHazeIntensityMultiplier <= 0 || (GetINIString "Debug:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
         let fHazeIntensityMultiplier := 1.00
+    elseif eval fHazeIntensityMultiplier < 0.1
+        let fHazeIntensityMultiplier := 0.1 ; Clamp to the MCM minimum
+    elseif eval fHazeIntensityMultiplier > 2.5
+        let fHazeIntensityMultiplier := 2.5 ; Clamp to the MCM maximum
     endif
 
     ; Get the start hour from the INI, and set it to a default if invalid
@@ -286,15 +290,15 @@ begin function {}
     ; Variable saving
     ; ===============
 
-    ; Setting the scale to 4x the haze spread value (which is 4x the mesh's size)
-    let fScale := fHazeSpread * 4
+    ; Set the scale to the haze spread
+    let fScale := fHazeSpread
     
     ; Store it so the update function can re-apply it if it doesn't stick while disabled / in menus
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Scale" fScale
     rHaze.SetScale fScale
 
     ; Calculating the refreraction strength
-    let fRefractionStrength := 0.4 * fHazeIntensityMultiplier
+    let fRefractionStrength := 0.4 * fHazeSpread * fHazeIntensityMultiplier
     
     ; Set the strength to 1 if it's greater, since the nif can't have a higher than a value of 1 for the refraction
     if eval fRefractionStrength > 1

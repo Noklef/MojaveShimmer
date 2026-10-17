@@ -52,7 +52,7 @@
                     "title": "Spread Distance",
                     "enable": 1,
                     "type": 2.5,
-                    "mouse": "Set the distance that the heat haze effect starts at. At further distances, increase the Intensity Multiplier.",
+                    "mouse": "Set the distance that the heat haze effect starts at. The strength scales with it, so the effect looks the same at any distance.",
                     "vars": [
                         { "configINI": "Settings:HazeSpread", "default": 1.0 }
                     ],
@@ -81,22 +81,6 @@
                     },
                     "suffix": ":00",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
-                },
-                "11": {
-                    "title": "Intensity Multiplier",
-                    "enable": 1,
-                    "type": 2.5,
-                    "mouse": "Adjusts the strength of the distortion effect.",
-                    "vars": [
-                        { "configINI": "Settings:HazeIntensityMultiplier", "default": 1.0 }
-                    ],
-                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 },
-                    "scale": {
-                        "valueDecimal": 2,
-                        "valueIncrement": 0.1,
-                        "valueMin": 0.5,
-                        "valueMax": 2.5
-                    }
                 },
                 "12": {
                     "title": "Haze Ends",
@@ -171,6 +155,22 @@
                         { "configINI": "Debug:bAllTimes", "default": 0 }
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "4": {
+                    "title": "Intensity Multiplier",
+                    "enable": 1,
+                    "type": 2.5,
+                    "mouse": "Adjusts the strength of the distortion effect, on top of the automatic scaling with Spread Distance.",
+                    "vars": [
+                        { "configINI": "Debug:HazeIntensityMultiplier", "default": 1.0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 },
+                    "scale": {
+                        "valueDecimal": 2,
+                        "valueIncrement": 0.1,
+                        "valueMin": 0.1,
+                        "valueMax": 2.5
+                    }
                 }
             }
         }
