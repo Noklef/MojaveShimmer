@@ -53,10 +53,10 @@ I'm not going to deny the usage of AI for working on this; although I wouldn't c
 I've been testing this on every commit; making sure it's still working as expected.
 
 Ai was used in the following ways:
-- Helping me find resources to port the logic over / researching how NVSE plugins are implemented in this fashion.
+- Helping me find resources to port the logic over / researching how NVSE plugins are implemented
 - Correcting my mistakes in implementation (i.e. reference fixes, reviewing, looking for anything specifically GECK/NVSE related that I didn't necessarily realise) + debugging nuances & figuring out engine quirks
 - Helping me update / modify the [Blender niftools addon](https://github.com/niftools/blender_niftools_addon) to work with recent versions of Blender.
-- Generating the GitHub release scripts / `build.py` script.
+- Generating the GitHub release scripts / `build.py` script
 
 Model used: `Claude Opus 5.5` (Formerly `GPT-6.1 Sol`)
 
