@@ -84,6 +84,22 @@
                     "suffix": ":00",
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
+                "11": {
+                    "title": "Refraction Speed Modifier",
+                    "enable": 1,
+                    "type": 2,
+                    "mouse": "Controls how quickly the heat shimmer... shimmers",
+                    "vars": [
+                        { "configINI": "Settings:RefractionSpeed", "default": 1 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 },
+                    "scale": {
+                        "valueDecimal": 1,
+                        "valueIncrement": 0.1,
+                        "valueMin": 0.5,
+                        "valueMax": 2.5
+                    }
+                },
                 "12": {
                     "title": "Haze Ends",
                     "enable": 1,

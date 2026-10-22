@@ -14,6 +14,7 @@ cylinder = next(c for c in root.children if c.name == "MojaveShimmerCylinder")
 shader = next(p for p in cylinder.properties if isinstance(p, Nif.BSShaderPPLightingProperty))
 strength = shader.refraction_strength # Blender shader refraction
 normal_map = shader.texture_set.textures[1] #[1] is the normal map we're using
+refraction_speed = 2 # Preserve the shipped mesh's current fire-period speed
 
 # Create the `NiFloatData` block we need for the refraction
 keys = Nif.NiFloatData(data)
@@ -35,8 +36,25 @@ def controller(controller_type):
     controller.interpolator = interpolator
     return controller
 
+speed_keys = Nif.NiFloatData(data)
+speed_keys.data.num_keys = 2
+speed_keys.data.reset_field("keys")
+speed_keys.data.keys[1].time = 1.0
+for key in speed_keys.data.keys:
+    key.value = refraction_speed
+
+speed_interpolator = Nif.NiFloatInterpolator(data)
+speed_interpolator.value = refraction_speed
+speed_interpolator.data = speed_keys
+speed_controller = Nif.BSRefractionFirePeriodController(data)
+speed_controller.flags = Nif.TimeControllerFlags.from_value(0x48)
+speed_controller.start_time = 0.0
+speed_controller.stop_time = 1.0
+speed_controller.interpolator = speed_interpolator
+
 # add_controller also points the controller's target back at the shader
 shader.add_controller(controller(Nif.BSRefractionStrengthController))
+shader.add_controller(speed_controller)
 
 # The helper: a hidden triangle whose texture transform controller is what SetTextureTransformKey
 # edits (ctrlIdx 0). All it does itself is shift its own unseen texture's U.
@@ -55,6 +73,16 @@ texturing.has_base_texture = True
 texturing.base_texture.source = texture
 texturing.base_texture.has_texture_transform = True   # the transform the controller shifts
 texturing.add_controller(controller(Nif.NiTextureTransformController))
+
+speed_helper_interpolator = Nif.NiFloatInterpolator(data)
+speed_helper_interpolator.value = refraction_speed
+speed_helper_interpolator.data = speed_keys
+speed_helper_controller = Nif.NiTextureTransformController(data)
+speed_helper_controller.flags = Nif.TimeControllerFlags.from_value(0x48)
+speed_helper_controller.start_time = 0.0
+speed_helper_controller.stop_time = 1.0
+speed_helper_controller.interpolator = speed_helper_interpolator
+texturing.add_controller(speed_helper_controller)
 
 unlit = Nif.BSShaderNoLightingProperty(data)
 unlit.shader_type = Nif.BSShaderType.SHADER_NOLIGHTING

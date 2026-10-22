@@ -21,6 +21,7 @@ begin function {}
     ref rHaze                   ; The actual haze object
     float fScale                ; Scale that's calculated from the haze spread
     float fRefractionStrength   ; Refraction strength supplied to the NIF controller
+    float fRefractionSpeed      ; Refraction speed supplied to the NIF controller
 
     int bEnabled                    ; INI - Enable / Disable the mod
     int bFallout3                   ; INI - Enable / Disable F03 (TTW)
@@ -94,6 +95,16 @@ begin function {}
         let fHazeIntensityMultiplier := 0.5 ; Clamp to the MCM minimum
     elseif eval fHazeIntensityMultiplier > 2.5
         let fHazeIntensityMultiplier := 2.5 ; Clamp to the MCM maximum
+    endif
+
+    ; Read the speed of the effect, default to 1 if it's missing
+    let fRefractionSpeed := GetINIFloat "Settings:RefractionSpeed" "MojaveShimmer.ini"
+    if eval (GetINIString "Settings:RefractionSpeed" "MojaveShimmer.ini") == ""
+        let fRefractionSpeed := 1
+    elseif eval fRefractionSpeed < 0.5
+        let fRefractionSpeed := 0.5 ; Clamp to the MCM minimum
+    elseif eval fRefractionSpeed > 2.5 
+        let fRefractionSpeed := 2.5 ; Clamp to the MCM maximum
     endif
 
     ; Get the start hour from the INI, and set it to a default if invalid
@@ -308,6 +319,8 @@ begin function {}
         let fRefractionStrength := 1
     endif
     rHaze.AuxVarSetFlt "*_MojaveShimmer.Strength" fRefractionStrength
+
+    rHaze.AuxVarSetFlt "*_MojaveShimmer.Speed" fRefractionSpeed
 
     ; Store the timing settings for the update function
     rHaze.AuxVarSetFlt "*_MojaveShimmer.StartHour" fStartHour

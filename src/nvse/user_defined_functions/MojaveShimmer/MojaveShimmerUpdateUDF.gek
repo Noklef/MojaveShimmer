@@ -111,6 +111,11 @@ begin function {}
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 0 fRefractionStrength
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 1 fRefractionStrength
 
+            ; The helper's second texture controller shares keys with the shader's fire-period controller
+            float fRefractionSpeed = (rHaze.AuxVarGetFlt "*_MojaveShimmer.Speed")
+            rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 1 0 fRefractionSpeed
+            rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 1 1 fRefractionSpeed
+
             ; IF we're debugging, show the wireframe outline (only read here, since this is the only place it's used)
             if eval (rHaze.AuxVarGetFlt "*_MojaveShimmer.Wireframe")
                 rHaze.SetNifBlockFlag "MojaveShimmerDebugWireframe" 0 0
