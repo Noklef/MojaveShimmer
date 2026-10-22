@@ -17,6 +17,7 @@ Plus i wanted to try my hand at New Vegas-specific modding for the first time th
 - Configurable through [MCM Extender](https://www.nexusmods.com/newvegas/mods/93642) (optional) or the INI:
   - **Distance** (50-100m distances)
   - **Start / end times** and the **fade length** in / out
+  - **Speed of the effect** (0.5x to 2.5x)
   - **Fallout 3 areas** (Experimental, not fully tested)
 - **Debug** options: Wireframe to show the distance, an **Intensity Multiplier**, and **All Weathers** / **All Times** to ignore the weather or time of day.
 - ***TTW Compatible*** for the most part
