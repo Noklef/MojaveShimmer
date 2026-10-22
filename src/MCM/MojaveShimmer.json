@@ -97,8 +97,10 @@
                         "valueDecimal": 1,
                         "valueIncrement": 0.1,
                         "valueMin": 0.5,
-                        "valueMax": 2.5
-                    }
+                        "valueMax": 2.5,
+                        "suffix": "x"
+                    },
+                    "suffix": "x"
                 },
                 "12": {
                     "title": "Haze Ends",
