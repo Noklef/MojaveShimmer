@@ -6,6 +6,14 @@ begin function {sSavePath}
     ref rHazeBase   ; Our custom activator we clone with the heat mesh assigned to it
     ref rHaze       ; The actual haze object
 
+    ; clear the read-only MCM Stats stuff before we load the save
+    player.AuxVarErase "*_MojaveShimmer.Info.TimeFactor"
+    player.AuxVarErase "*_MojaveShimmer.Info.IncomingShimmer"
+    player.AuxVarErase "*_MojaveShimmer.Info.OutgoingShimmer"
+    player.AuxVarErase "*_MojaveShimmer.Info.ShimmerIntensity"
+    player.AuxVarErase "*_MojaveShimmer.Info.BaseRefractionStrength"
+    player.AuxVarErase "*_MojaveShimmer.Info.RefractionStrength"
+
     ; Get the 2 references we need to clean up the haze effect
     let rHazeBase := player.AuxVarGetRef "*_MojaveShimmer.Base"
     let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"

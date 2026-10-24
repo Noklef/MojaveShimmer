@@ -4,6 +4,7 @@ begin function {}
     ;   - https://geckwiki.com/index.php?title=GetOutgoingWeather
     ;   - https://geckwiki.com/index.php?title=GetCurrentWeather
     ;   - https://geckwiki.com/index.php?title=GetWeatherTraitNumeric
+    ;   - https://geckwiki.com/index.php/Sv_Construct
 
     ref rHaze           ; The actual haze object
 
@@ -12,24 +13,40 @@ begin function {}
     int bAllWeathers    ; INI toggle to ignore the weather completely, cached on the haze object by setup
     ref rBlockList      ; Weathers that never get the haze, built by setup
 
+    ; Pull out the values here from the script; since we're reading these in MCM now
+    float fIncomingShimmer = 0
+    float fOutgoingShimmer = 0
+    float fTimeFactor = 0
+    float fShimmerIntensity = 0
+    float fBaseRefractionStrength = 0
+    float fRefractionStrength = 0
+
     ; Created haze object reference
     let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"
 
-    ; If there's no valid haze ref (e.g. MojaveShimmerCleanupUDF erased the .Ref aux var), there's nothing to update
+    ; IF there's no heat haze (disabled for instance), We remove the variables that were crated (if any)
     if eval !rHaze || !(IsReference rHaze)
+        player.AuxVarErase "*_MojaveShimmer.Info.TimeFactor"
+        player.AuxVarErase "*_MojaveShimmer.Info.IncomingShimmer"
+        player.AuxVarErase "*_MojaveShimmer.Info.OutgoingShimmer"
+        player.AuxVarErase "*_MojaveShimmer.Info.ShimmerIntensity"
+        player.AuxVarErase "*_MojaveShimmer.Info.BaseRefractionStrength"
+        player.AuxVarErase "*_MojaveShimmer.Info.RefractionStrength"
         return
     endif
+
+    fBaseRefractionStrength = rHaze.AuxVarGetFlt "*_MojaveShimmer.Strength"
 
     ; If we're inside, or under water; then disable the effect
     ; Both checks, and the 0.875 (87.5% submerged), come from the original Heat Haze mod
     if eval player.IsInInterior || player.GetWaterImmersionPerc >= 0.875
-        ; Hide it if it isn't already
+        ; Hide it, if it isn't already
         if eval !rHaze.GetDisabled
             rHaze.Disable
         endif
     else
         let rWeatherIn := GetCurrentWeather ; Getting the current weather
-        let rWeatherOut := GetOutgoingWeather ; NVSE-specific weather function that the weather is tranferring from
+        let rWeatherOut := GetOutgoingWeather ; Climate Control NVSE-specific weather function that the weather is tranferring from
         float fWeatherPct = GetCurrentWeatherPercent ; Getting % of transition
 
         ; fetch the data we need for checking
@@ -37,7 +54,6 @@ begin function {}
         let rBlockList := player.AuxVarGetRef "*_MojaveShimmer.BlockList"
 
         ; Logic around figuring out the shimmer of the incoming weather change (I.E. weather we're transitioning to)
-        float fIncomingShimmer = 0
         if eval rWeatherIn ; safety check to ensure we're pulling the current weather
             ; First check, if we allow all weathers
             if eval bAllWeathers
@@ -52,7 +68,6 @@ begin function {}
         endif
 
         ; Same logic as above, except for the outgoing weather (I.E. transitioning from)
-        float fOutgoingShimmer = 0
         ; safety check for weather out reference + checking the outgoing weather transition isn't at 100% (changing still)
         if eval rWeatherOut && fWeatherPct < 1
             ; First check, same as fIncomingShimmer's
@@ -68,7 +83,7 @@ begin function {}
         endif
 
         ; se the time factor here in case of all times
-        float fTimeFactor = 1
+        fTimeFactor = 1
         if eval !(rHaze.AuxVarGetFlt "*_MojaveShimmer.AllTimes")
             ; Get the values we need
             float fStartHour = rHaze.AuxVarGetFlt "*_MojaveShimmer.StartHour" 
@@ -89,7 +104,7 @@ begin function {}
         endif
 
         ; How strong the effect is right now from 0 -> 1, using the time factor to ramp it in
-        float fShimmerIntensity = (fOutgoingShimmer + fIncomingShimmer) * fTimeFactor
+        fShimmerIntensity = (fOutgoingShimmer + fIncomingShimmer) * fTimeFactor
 
         ; Only show it when there's something to see; the 0.01 just stops it enabling at a strength of ~0
         if fShimmerIntensity > 0.01
@@ -106,7 +121,7 @@ begin function {}
 
             ; Setting up the hidden helper's texture controller to control refraction strength
             ; This is a bit of a hack tbh
-            float fRefractionStrength = (rHaze.AuxVarGetFlt "*_MojaveShimmer.Strength") * fShimmerIntensity
+            fRefractionStrength = fBaseRefractionStrength * fShimmerIntensity
 
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 0 fRefractionStrength
             rHaze.SetTextureTransformKey "MojaveShimmerStrengthControl" 0 1 fRefractionStrength
@@ -132,4 +147,12 @@ begin function {}
             endif
         endif
     endif
+
+    ; Set the string values for display in MCM (can't be floats, so need to convert)
+    player.AuxVarSetStr "*_MojaveShimmer.Info.TimeFactor" (Sv_Construct "%.2f" fTimeFactor)
+    player.AuxVarSetStr "*_MojaveShimmer.Info.IncomingShimmer" (Sv_Construct "%.2f" fIncomingShimmer)
+    player.AuxVarSetStr "*_MojaveShimmer.Info.OutgoingShimmer" (Sv_Construct "%.2f" fOutgoingShimmer)
+    player.AuxVarSetStr "*_MojaveShimmer.Info.ShimmerIntensity" (Sv_Construct "%.2f" fShimmerIntensity)
+    player.AuxVarSetStr "*_MojaveShimmer.Info.BaseRefractionStrength" (Sv_Construct "%.2f" fBaseRefractionStrength)
+    player.AuxVarSetStr "*_MojaveShimmer.Info.RefractionStrength" (Sv_Construct "%.2f" fRefractionStrength)
 end

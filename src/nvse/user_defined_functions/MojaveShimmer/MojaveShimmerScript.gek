@@ -33,6 +33,7 @@ begin function {}
     float fStartHour                ; INI - The hour the haze starts fading in
     float fEndHour                  ; INI - The hour the haze has fully faded out
     float fFadeHours                ; INI - How many hours the fade in / out takes
+
     float fHazeSpread               ; HazeDistance / 50 - used for scaling
 
     ; ==============================================

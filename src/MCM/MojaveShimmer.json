@@ -143,36 +143,21 @@
         "2": {
             "listTitle": "Debug",
             "pageTitle": "Mojave Shimmer - Debug",
-            "columns": 1,
+            "columns": 2,
             "enable": 1,
             "options": {
                 "1": {
+                    "title": "Debug",
+                    "enable": 1,
+                    "type": 0
+                },
+                "3": {
                     "title": "Show Wireframe",
                     "enable": 1,
                     "type": 5,
                     "mouse": "Shows a green outline for the haze effect. This is the distance the haze will appear.",
                     "vars": [
                         { "configINI": "Debug:bWireframe", "default": 0 }
-                    ],
-                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
-                },
-                "2": {
-                    "title": "All Weathers",
-                    "enable": 1,
-                    "type": 5,
-                    "mouse": "Shows the heat haze in every weather, ignoring the weather checks.",
-                    "vars": [
-                        { "configINI": "Debug:bAllWeathers", "default": 0 }
-                    ],
-                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
-                },
-                "3": {
-                    "title": "All Times",
-                    "enable": 1,
-                    "type": 5,
-                    "mouse": "Shows the heat haze at every time of day, ignoring the Timing settings.",
-                    "vars": [
-                        { "configINI": "Debug:bAllTimes", "default": 0 }
                     ],
                     "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
                 },
@@ -191,6 +176,73 @@
                         "valueMin": 0.5,
                         "valueMax": 2.5
                     }
+                },
+                "5": {
+                    "title": "All Weathers",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": "Shows the heat haze in every weather, ignoring the weather checks.",
+                    "vars": [
+                        { "configINI": "Debug:bAllWeathers", "default": 0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "6": {
+                    "title": "All Times",
+                    "enable": 1,
+                    "type": 5,
+                    "mouse": "Shows the heat haze at every time of day, ignoring the Timing settings.",
+                    "vars": [
+                        { "configINI": "Debug:bAllTimes", "default": 0 }
+                    ],
+                    "state": { "configINI": "General:bEnabled", "default": 1, "value": 1, "disable": 1 }
+                },
+                "9": {
+                    "title": "Diagnostics",
+                    "enable": 1,
+                    "type": 0
+                },
+                "11": {
+                    "title": "Time Factor",
+                    "enable": 1,
+                    "type": 7,
+                    "mouse": "This will update when you exit / leave MCM.",
+                    "string": { "form": "PlayerRef", "auxVar": "*_MojaveShimmer.Info.TimeFactor", "key": 0 }
+                },
+                "12": {
+                    "title": "Shimmer Intensity",
+                    "enable": 1,
+                    "type": 7,
+                    "mouse": "This will update when you exit / leave MCM.",
+                    "string": { "form": "PlayerRef", "auxVar": "*_MojaveShimmer.Info.ShimmerIntensity", "key": 0 }
+                },
+                "13": {
+                    "title": "Incoming Shimmer",
+                    "enable": 1,
+                    "type": 7,
+                    "mouse": "This will update when you exit / leave MCM.",
+                    "string": { "form": "PlayerRef", "auxVar": "*_MojaveShimmer.Info.IncomingShimmer", "key": 0 }
+                },
+                "14": {
+                    "title": "Outgoing Shimmer",
+                    "enable": 1,
+                    "type": 7,
+                    "mouse": "This will update when you exit / leave MCM.",
+                    "string": { "form": "PlayerRef", "auxVar": "*_MojaveShimmer.Info.OutgoingShimmer", "key": 0 }
+                },
+                "15": {
+                    "title": "Base Refraction Strength",
+                    "enable": 1,
+                    "type": 7,
+                    "mouse": "This will update when you exit / leave MCM.",
+                    "string": { "form": "PlayerRef", "auxVar": "*_MojaveShimmer.Info.BaseRefractionStrength", "key": 0 }
+                },
+                "16": {
+                    "title": "Applied Refraction Strength",
+                    "enable": 1,
+                    "type": 7,
+                    "mouse": "This will update when you exit / leave MCM.",
+                    "string": { "form": "PlayerRef", "auxVar": "*_MojaveShimmer.Info.RefractionStrength", "key": 0 }
                 }
             }
         }

@@ -1,5 +1,13 @@
 begin function {}
     ref rHaze   ; The actual haze object
+
+    ; clear the read-only MCM Stats stuff when the mod is disabled
+    player.AuxVarErase "*_MojaveShimmer.Info.TimeFactor" "0.00"
+    player.AuxVarErase "*_MojaveShimmer.Info.IncomingShimmer" "0.00"
+    player.AuxVarErase "*_MojaveShimmer.Info.OutgoingShimmer" "0.00"
+    player.AuxVarErase "*_MojaveShimmer.Info.ShimmerIntensity" "0.00"
+    player.AuxVarErase "*_MojaveShimmer.Info.BaseRefractionStrength" "0.00"
+    player.AuxVarErase "*_MojaveShimmer.Info.RefractionStrength" "0.00"
     
     ; Created haze object reference
     let rHaze := player.AuxVarGetRef "*_MojaveShimmer.Ref"
