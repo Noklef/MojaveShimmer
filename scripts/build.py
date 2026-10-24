@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "src"
-OUTPUT = ROOT / "dist" / "MojaveShimmer.zip"
+OUTPUT = ROOT / "dist" / "MojaveShimmerDebug.zip"
 
 MESH = Path("Meshes/mojaveshimmer/mojaveshimmer_cylinder.nif")  # Relative to src/, the only mesh that ships
 NIF_HEADER = b"Gamebryo File Format, Version 20.2.0.7\n"

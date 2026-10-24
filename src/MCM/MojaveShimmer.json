@@ -2,7 +2,7 @@
     "modName": "MojaveShimmer",
     "displayName": "Mojave Shimmer",
     "saveFile": "MojaveShimmer.ini",
-    "minMCMVersion": 1.0,
+    "minMCMVersion": 1.2,
     "requirements": [
         { "type": "file", "file": "nvse/plugins/scripts/ln_MojaveShimmer.txt" }
     ],

@@ -122,7 +122,7 @@ begin function {}
             endif
 
             ; This follows the player, but not the camera (?), so would third person break?
-            rHaze.MoveTo player 0 0 10
+            rHaze.MoveTo player 0 0 0
             ; Copy also rotates with player, so we need to reset it  (test this)
             rHaze.SetAngleEx 0 0 0
         else
