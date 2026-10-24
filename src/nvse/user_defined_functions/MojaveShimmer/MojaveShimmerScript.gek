@@ -74,53 +74,40 @@ begin function {}
     ; =======================
 
     let fHazeDistance := GetINIFloat "Settings:HazeDistance" "MojaveShimmer.ini"
-
-    ; Do some checks to clamp down the haze distance if it's too wild
+    ; Only check if the heat haze is a negative number or 0
     if eval fHazeDistance <= 0
         let fHazeDistance := 50 ; Use the default if missing or not a positive distance
-    elseif eval fHazeDistance < 50
-        let fHazeDistance := 50 ; Clamp to the MCM minimum
-    elseif eval fHazeDistance > 100
-        let fHazeDistance := 100 ; Clamp this to the MCM maximum (past ~108m the game stops drawing the refraction, starting in the middle of the screen)
     endif
 
     ; Originally were doing 1:1, but now with MCM we need to divide it by 50 (since the cylinder model defaults to 50m)
     let fHazeSpread := fHazeDistance / 50
 
-    ; Reading the multiplier, and defaulting to 1 if it's missing or not positive
+    ; Only check if the intensity multiplier is a negative number or 0
     let fHazeIntensityMultiplier := GetINIFloat "Debug:HazeIntensityMultiplier" "MojaveShimmer.ini"
-    if eval fHazeIntensityMultiplier <= 0 || (GetINIString "Debug:HazeIntensityMultiplier" "MojaveShimmer.ini") == ""
+    if eval fHazeIntensityMultiplier <= 0
         let fHazeIntensityMultiplier := 1.00
-    elseif eval fHazeIntensityMultiplier < 0.5
-        let fHazeIntensityMultiplier := 0.5 ; Clamp to the MCM minimum
-    elseif eval fHazeIntensityMultiplier > 2.5
-        let fHazeIntensityMultiplier := 2.5 ; Clamp to the MCM maximum
     endif
 
-    ; Read the speed of the effect, default to 1 if it's missing
+    ; Only check if the refraction speed is a negative number or 0
     let fRefractionSpeed := GetINIFloat "Settings:RefractionSpeed" "MojaveShimmer.ini"
-    if eval (GetINIString "Settings:RefractionSpeed" "MojaveShimmer.ini") == ""
-        let fRefractionSpeed := 1
-    elseif eval fRefractionSpeed < 0.5
+    if eval fRefractionSpeed <= 0
         let fRefractionSpeed := 0.5 ; Clamp to the MCM minimum
-    elseif eval fRefractionSpeed > 2.5 
-        let fRefractionSpeed := 2.5 ; Clamp to the MCM maximum
     endif
 
     ; Get the start hour from the INI, and set it to a default if invalid
     let fStartHour := GetINIFloat "Timing:StartHour" "MojaveShimmer.ini"
-    if eval (GetINIString "Timing:StartHour" "MojaveShimmer.ini") == ""
+    if eval fStartHour <= 0
         let fStartHour := 6
     endif
 
     ; Get the end hour from the INI, and set it to a default if invalid
     let fEndHour := GetINIFloat "Timing:EndHour" "MojaveShimmer.ini"
-    if eval (GetINIString "Timing:EndHour" "MojaveShimmer.ini") == ""
+    if eval fEndHour > 23
         let fEndHour := 19
     endif
 
-    ; Set the hour to defaults if any misconfiguration
-    if eval fStartHour < 0 || fEndHour > 23 || fEndHour <= fStartHour
+    ; Reset both hours if the resulting range is invalid
+    if eval fEndHour <= fStartHour
         let fStartHour := 6
         let fEndHour := 19
     endif
@@ -129,12 +116,11 @@ begin function {}
     let fFadeHours := GetINIFloat "Timing:FadeHours" "MojaveShimmer.ini"
     if eval (GetINIString "Timing:FadeHours" "MojaveShimmer.ini") == ""
         let fFadeHours := 2
-    elseif eval fFadeHours < 0
-        let fFadeHours := 0
     endif
 
-    ; Small bit of logic to make the fades not overlap
-    if eval fFadeHours > (fEndHour - fStartHour) / 2
+    if eval fFadeHours < 0
+        let fFadeHours := 0
+    elseif eval fFadeHours > (fEndHour - fStartHour) / 2
         let fFadeHours := (fEndHour - fStartHour) / 2
     endif
 
@@ -298,7 +284,6 @@ begin function {}
 
     ; Hide during setup. The update function enables it on weather / time conditions
     rHaze.Disable
-
 
     ; ===============
     ; Variable saving
